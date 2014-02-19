@@ -45,6 +45,5 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
 		this.thread.isRunning = false;
-		System.exit(0);
 	}
 }
