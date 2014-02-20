@@ -40,8 +40,11 @@ public class BeeProcess extends Thread
 			this.init();
 		this.y += this.my;
 		this.my += this.ay/this.requestedUps;
-		if(this.y <= this.r)
+		if(this.y <= this.r && this.my < 0F)
+		{
 			this.my *= -0.75F;
+			this.y = this.r;
+		}
 	}
 	
 	public void render()
@@ -88,8 +91,10 @@ public class BeeProcess extends Thread
 			this.crps++;
 			this.canvas = this.holder.lockCanvas();
 			if(this.canvas != null)
+			{
 				this.render();
-			this.holder.unlockCanvasAndPost(this.canvas);
+				this.holder.unlockCanvasAndPost(this.canvas);
+			}
 		}
 		this.close();
 	}
