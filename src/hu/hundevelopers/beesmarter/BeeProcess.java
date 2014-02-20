@@ -24,6 +24,11 @@ public class BeeProcess extends Thread
 		this.lastUpdateTime = -1;
 	}
 	
+	public void onMenuButton()
+	{
+		
+	}
+	
 	public void init()
 	{
 		

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class MainView extends SurfaceView implements SurfaceHolder.Callback
+public class MainSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-	private BeeProcess thread;
+	public BeeProcess thread;
 	
-	public MainView(Context context)
+	public MainSurface(Context context)
 	{
 		super(context);
 		getHolder().addCallback(this);
