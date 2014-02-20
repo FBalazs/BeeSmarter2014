@@ -26,13 +26,12 @@ public class MainSurface extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		this.thread.isRunning = true;
-		this.thread.start();
+		
 	}
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
-		this.thread.isRunning = false;
+		
 	}
 }
