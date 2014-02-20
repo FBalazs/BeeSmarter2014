@@ -24,7 +24,17 @@ public class BeeProcess extends Thread
 		this.lastUpdateTime = -1;
 	}
 	
-	public void onMenuButton()
+	/**
+	 * Function called by activity when the back button has been pressed.
+	 * @return True if the press is processed, false if it isn't.
+	 */
+	public boolean onBackPressed()
+	{
+		
+		return false;
+	}
+	
+	public void onMenuPressed()
 	{
 		
 	}

@@ -17,10 +17,17 @@ public class MainActivity extends Activity
 	}
 	
 	@Override
+	public void onBackPressed()
+	{
+		if(!this.surface.thread.onBackPressed())
+			super.onBackPressed();
+	}
+	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		//getMenuInflater().inflate(R.menu.main, menu);
-		this.surface.thread.onMenuButton();
+		this.surface.thread.onMenuPressed();
 		return true;
 	}
 }
