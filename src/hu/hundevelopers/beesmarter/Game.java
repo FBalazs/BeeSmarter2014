@@ -1,25 +1,72 @@
 package hu.hundevelopers.beesmarter;
 
+import hu.hundevelopers.beesmarter.glass.Glass;
+import hu.hundevelopers.beesmarter.glass.GlassSquareMirror;
+import hu.hundevelopers.beesmarter.math.Line;
+import hu.hundevelopers.beesmarter.math.Vertex;
+
 import java.util.List;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.GestureDetector;
 
-public class BeeProcess implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
+public class Game implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
 {
+	public static Game instance;
+	
+	
+	
 	public SurfaceHolder holder;
-	public int width, height;
+	public int width, height, tilesize = 64;
 	public List<Glass> glasses;
 	public List<Line> laser;
 	
-	public BeeProcess(SurfaceHolder holder)
+	public Game(SurfaceHolder holder)
 	{
+		instance = this;
 		this.holder = holder;
 	}
+	
+	public void resize(int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+	}
+	
+	public void update()
+	{
+		
+	}
+	
+	public void render()
+	{
+		Canvas canvas = this.holder.lockCanvas();
+		if(canvas == null)
+			return;
+		canvas.drawColor(Color.BLACK);
+		
+		Glass g = new GlassSquareMirror(width/2, height/2, 22);
+		Line l = new Line(width/10, height/10, 1F, -1F);
+		
+		Paint paint = new Paint();
+		paint.setARGB(255, 255, 0, 0);
+		paint.setStrokeWidth(2F);
+		Vertex v = g.getLaserInterSectionPoint(l);
+		if(v == null)
+			v = new Vertex(l.x, l.y);
+		canvas.drawLine(l.x, l.y, v.x, v.y, paint);
+		Log.d("DEBUG", ""+l.x+" "+l.y+" "+v.x+" "+v.y);
+		g.render(canvas);
+		
+		this.holder.unlockCanvasAndPost(canvas);
+	}
+	
+	
 	
 	/**
 	 * Function called by activity when the back button has been pressed.
@@ -34,24 +81,6 @@ public class BeeProcess implements GestureDetector.OnGestureListener, GestureDet
 	public void onMenuPressed()
 	{
 		
-	}
-	
-	public void update()
-	{
-		y = (n1*((y2-y1)*x1+(x1-x2)*y1) - (y2-y1)*(n1*p+n2*q))/(n1*(x1-x2)-n2*(y2-y1));
-	}
-	
-	public void render()
-	{
-		Canvas canvas = this.holder.lockCanvas();
-		if(canvas == null)
-			return;
-		canvas.drawColor(Color.BLACK);
-		
-		Paint paint = new Paint();
-		paint.setARGB(255, 255, 0, 0);
-		
-		this.holder.unlockCanvasAndPost(canvas);
 	}
 
 	@Override

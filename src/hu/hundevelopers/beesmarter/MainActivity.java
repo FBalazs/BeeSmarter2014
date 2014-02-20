@@ -6,20 +6,17 @@ import android.view.Menu;
 
 public class MainActivity extends Activity
 {
-	public MainSurface surface;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		this.surface = new MainSurface(this);
-		setContentView(this.surface);
+		setContentView(new GameSurface(this));
 	}
 	
 	@Override
 	public void onBackPressed()
 	{
-		if(!this.surface.thread.onBackPressed())
+		if(!Game.instance.onBackPressed())
 			super.onBackPressed();
 	}
 	
@@ -27,7 +24,7 @@ public class MainActivity extends Activity
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		//getMenuInflater().inflate(R.menu.main, menu);
-		this.surface.thread.onMenuPressed();
+		Game.instance.onMenuPressed();
 		return true;
 	}
 }
