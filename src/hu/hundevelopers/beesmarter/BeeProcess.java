@@ -87,7 +87,8 @@ public class BeeProcess extends Thread
 			}
 			this.crps++;
 			this.canvas = this.holder.lockCanvas();
-			this.render();
+			if(this.canvas != null)
+				this.render();
 			this.holder.unlockCanvasAndPost(this.canvas);
 		}
 		this.close();
