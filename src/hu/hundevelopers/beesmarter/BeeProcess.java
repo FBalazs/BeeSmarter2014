@@ -1,5 +1,7 @@
 package hu.hundevelopers.beesmarter;
 
+import java.util.List;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,8 +12,9 @@ import android.view.GestureDetector;
 public class BeeProcess implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
 {
 	public SurfaceHolder holder;
-	
 	public int width, height;
+	public List<Glass> glasses;
+	public List<Line> laser;
 	
 	public BeeProcess(SurfaceHolder holder)
 	{
@@ -35,7 +38,7 @@ public class BeeProcess implements GestureDetector.OnGestureListener, GestureDet
 	
 	public void update()
 	{
-		
+		y = (n1*((y2-y1)*x1+(x1-x2)*y1) - (y2-y1)*(n1*p+n2*q))/(n1*(x1-x2)-n2*(y2-y1));
 	}
 	
 	public void render()
