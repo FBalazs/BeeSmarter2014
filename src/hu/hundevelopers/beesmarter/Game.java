@@ -11,40 +11,73 @@ import hu.hundevelopers.beesmarter.math.Vertex;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.GestureDetector;
+import android.view.SurfaceView;
 
-public class Game implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
+public class Game extends SurfaceView implements SurfaceHolder.Callback, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
 {
 	public static Game instance;
 	
 	
 	
-	public SurfaceHolder holder;
-	public int width, height, tilesize = 64;
+	public GestureDetectorCompat gestureDetector;
+	public int width, height, tilesize, tilenumber = 6, size;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
 	
-	public Game(SurfaceHolder holder)
+	public int selectedGlass, squaredTouchRange;
+	
+	public Game(Context context)
 	{
+		super(context);
+		this.getHolder().addCallback(this);
+		this.gestureDetector = new GestureDetectorCompat(context, this);
+		this.gestureDetector.setOnDoubleTapListener(this);
+		
 		instance = this;
-		this.holder = holder;
 		this.glasses = new ArrayList<Glass>();
 		this.laser = new ArrayList<Line>();
 		this.claser = new ArrayList<Line>();
+		this.selectedGlass = -1;
+	}
+	
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+	{
+		this.resize(width, height);
+	}
+	
+	@Override
+	public void surfaceCreated(SurfaceHolder holder)
+	{
+		this.resize(this.getWidth(), this.getHeight());
+		this.update();
+		this.render();
+	}
+	
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder)
+	{
+		
 	}
 	
 	public void resize(int width, int height)
 	{
 		this.width = width;
 		this.height = height;
-		this.tilesize = Math.min(width, height)/6;
+		this.size = Math.min(width, height);
+		this.tilesize = this.size/this.tilenumber;
+		this.squaredTouchRange = this.tilesize*this.tilesize/2;
 		
+		this.glasses.clear();
 		this.glasses.add(new GlassSquareHalfMirror(width/2, tilesize/2, 0));
 		this.glasses.add(new GlassSquareMirror(tilesize/4, tilesize, 0));
 		this.glasses.add(new GlassSquareMirror(width, 0, 45));
@@ -59,9 +92,8 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(0, 0, width/2-tilesize/2, tilesize/2));
+		this.claser.add(new Line(tilesize/2, tilesize/2, size, tilesize/2));
 		
-		int s = 0;
 		while(this.claser.size() > 0)
 		{
 			int n = this.claser.size();
@@ -74,7 +106,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 					Vertex v = this.glasses.get(j).getLaserInterSectionPoint(this.claser.get(0));
 					if(v != null)
 					{
-						if((int)v.x != (int)this.claser.get(0).x1 || (int)v.y != (int)this.claser.get(0).y1)
+						if(1F <= Math.abs(this.claser.get(0).x1-v.x) || 1F <= Math.abs(this.claser.get(0).y1-v.y))
 							if((vmin == null || (v.x-this.claser.get(0).x1)*(v.x-this.claser.get(0).x1) + (v.y-this.claser.get(0).y1)*(v.y-this.claser.get(0).y1) < (vmin.x-this.claser.get(0).x1)*(vmin.x-this.claser.get(0).x1) + (vmin.y-this.claser.get(0).y1)*(vmin.y-this.claser.get(0).y1)))
 							{
 								min = j;
@@ -103,12 +135,13 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	
 	public void render()
 	{
-		Canvas canvas = this.holder.lockCanvas();
+		Canvas canvas = this.getHolder().lockCanvas();
 		if(canvas == null)
 			return;
 		canvas.drawColor(Color.BLACK);
 		
 		Paint paint = new Paint();
+		paint.setTextSize(15);
 		paint.setAntiAlias(true);
 		paint.setARGB(255, 255, 0, 0);
 		paint.setStrokeWidth(3F);
@@ -116,11 +149,10 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 			canvas.drawLine(this.laser.get(i).x1, this.laser.get(i).y1, this.laser.get(i).x2, this.laser.get(i).y2, paint);
 		for(int i = 0; i < this.glasses.size(); i++)
 			this.glasses.get(i).render(canvas);
+		paint.setARGB(255, 0, 255, 0);
 		
-		this.holder.unlockCanvasAndPost(canvas);
+		this.getHolder().unlockCanvasAndPost(canvas);
 	}
-	
-	
 	
 	/**
 	 * Function called by activity when the back button has been pressed.
@@ -135,6 +167,37 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	public void onMenuPressed()
 	{
 		
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		if(this.gestureDetector.onTouchEvent(event))
+			return true;
+		if(event.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			this.selectedGlass = -1;
+			for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
+				if((this.glasses.get(i).x-event.getX())*(this.glasses.get(i).x-event.getX()) + (this.glasses.get(i).y-event.getY())*(this.glasses.get(i).y-event.getY()) <= this.squaredTouchRange)
+					this.selectedGlass = i;
+			this.render();
+			return true;
+		}
+		else if(event.getAction() == MotionEvent.ACTION_UP)
+		{
+			this.selectedGlass = -1;
+		}
+		else if(event.getAction() == MotionEvent.ACTION_MOVE)
+		{
+			if(this.selectedGlass != -1)
+			{
+				this.glasses.get(this.selectedGlass).move((int)event.getX(), (int)event.getY());
+				this.update();
+				this.render();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

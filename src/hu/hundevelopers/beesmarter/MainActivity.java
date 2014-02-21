@@ -3,6 +3,9 @@ package hu.hundevelopers.beesmarter;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class MainActivity extends Activity
 {
@@ -10,7 +13,9 @@ public class MainActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(new GameSurface(this));
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(new Game(this));
 	}
 	
 	@Override
@@ -26,5 +31,11 @@ public class MainActivity extends Activity
 		//getMenuInflater().inflate(R.menu.main, menu);
 		Game.instance.onMenuPressed();
 		return true;
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		return super.onTouchEvent(event) || Game.instance.onTouchEvent(event);
 	}
 }

@@ -30,7 +30,7 @@ public class GlassSquarePrism extends Glass
 	@Override
 	public void handleLaserCollision(int side, Line laser, Vertex v)
 	{
-		Vertex vm = new Vertex(-(this.vertices[side].y-v.y)+v.x, (this.vertices[side].x-v.x)+v.y);
+		Vertex vm = new Vertex(this.vertices[(side+1)%this.vertices.length].y-this.vertices[side].y+v.x, this.vertices[side].x-this.vertices[(side+1)%this.vertices.length].x+v.y);
 		// tükör oldalának felezõmerõlegese
 		Line m = new Line(v, vm);
 		
@@ -40,12 +40,12 @@ public class GlassSquarePrism extends Glass
 		float dx = v2.x-v.x;
 		float dy = v2.y-v.y;
 		if(dx == 0)
-			dy = Math.abs(dy)/dy*Game.instance.height;
+			dy = Math.abs(dy)/dy*Game.instance.size;
 		else if(dy == 0)
-			dx = Math.abs(dx)/dx*Game.instance.width;
+			dx = Math.abs(dx)/dx*Game.instance.size;
 		else
 		{
-			float s = Math.max(Game.instance.width/Math.abs(dx), Game.instance.height/Math.abs(dy));
+			float s = Math.max(Game.instance.size/Math.abs(dx), Game.instance.size/Math.abs(dy));
 			dx *= s;
 			dy *= s;
 		}
