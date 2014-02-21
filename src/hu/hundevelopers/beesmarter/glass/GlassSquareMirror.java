@@ -20,7 +20,7 @@ public class GlassSquareMirror extends Glass
 		int d = 45;
 		for(int i = 0; i < 4; i++)
 		{
-			this.vertices[i] = new Vertex(this.x+MathHelper.cos(d+this.deg)*Game.instance.tilesize, this.y+MathHelper.sin(d+this.deg)*Game.instance.tilesize);
+			this.vertices[i] = new Vertex(this.x+MathHelper.cos(d+this.deg)*Game.instance.tilesize/(float)Math.sqrt(2), this.y+MathHelper.sin(d+this.deg)*Game.instance.tilesize/(float)Math.sqrt(2));
 			d += 90;
 		}
 	}
@@ -37,6 +37,6 @@ public class GlassSquareMirror extends Glass
 		Vertex k = MathHelper.getLineIntersection(m, m2);
 		// a tükrözött pont
 		Vertex t = new Vertex(laser.x1+2*(k.x-laser.x1), laser.y1+2*(k.y-laser.y1));
-		Game.instance.claser.add(new Line(v, t));
+		Game.instance.claser.add(new Line(v, new Vertex(v.x+100*(t.x-v.x), v.y+100*(t.y-v.y))));
 	}
 }
