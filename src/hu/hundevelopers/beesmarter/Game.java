@@ -40,7 +40,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	{
 		this.width = width;
 		this.height = height;
-		//this.glasses.add(new GlassSquareMirror(tilesize/2, height/2, 0));
+		this.glasses.add(new GlassSquareMirror(tilesize/2, height/2, 0));
 		this.glasses.add(new GlassSquareMirror(width-tilesize/2, height/2, 0));
 	}
 	
@@ -49,7 +49,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(width/10, height/10, width-tilesize/2, height/2-tilesize/2));
+		this.claser.add(new Line(width/10, height/2-tilesize*3/4, width-tilesize, height/2-tilesize/2));
 		
 		/*Vertex v = this.glasses.get(0).getLaserInterSectionPoint(this.claser.get(0));
 		if(v == null)

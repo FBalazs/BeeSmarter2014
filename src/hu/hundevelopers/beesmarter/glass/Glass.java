@@ -26,6 +26,11 @@ public abstract class Glass
 	public Vertex getLaserInterSectionPoint(Line laser)
 	{
 		Vertex min = MathHelper.getLineIntersection(laser, new Line(this.vertices[0], this.vertices[1]));
+		if((int)min.x < (int)Math.min(this.vertices[0].x, this.vertices[1].x)
+			|| (int)min.x > (int)Math.max(this.vertices[0].x, this.vertices[1].x)
+			|| (int)min.y < (int)Math.min(this.vertices[0].y, this.vertices[1].y)
+			|| (int)min.y > (int)Math.max(this.vertices[0].y, this.vertices[1].y))
+			min = null;
 		for(int i = 1; i < this.vertices.length; i++)
 		{
 			Vertex v = MathHelper.getLineIntersection(laser, new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]));
@@ -45,6 +50,11 @@ public abstract class Glass
 	{
 		int min = 0;
 		Vertex vmin = MathHelper.getLineIntersection(laser, new Line(this.vertices[0], this.vertices[1]));
+		if((int)vmin.x < (int)Math.min(this.vertices[0].x, this.vertices[1].x)
+			|| (int)vmin.x > (int)Math.max(this.vertices[0].x, this.vertices[1].x)
+			|| (int)vmin.y < (int)Math.min(this.vertices[0].y, this.vertices[1].y)
+			|| (int)vmin.y > (int)Math.max(this.vertices[0].y, this.vertices[1].y))
+			vmin = null;
 		for(int i = 1; i < this.vertices.length; i++)
 		{
 			Vertex v = MathHelper.getLineIntersection(laser, new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]));
