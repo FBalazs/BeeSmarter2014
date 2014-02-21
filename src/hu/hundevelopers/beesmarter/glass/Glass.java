@@ -26,10 +26,10 @@ public abstract class Glass
 	public Vertex getLaserInterSectionPoint(Line laser)
 	{
 		Vertex min = MathHelper.getLineIntersection(new Line(this.vertices[0], this.vertices[1]), laser);
-		if(Math.max(this.vertices[0].x, this.vertices[1].x) <= min.x
-			|| min.x <= Math.min(this.vertices[0].x, this.vertices[1].x)
-			|| Math.max(this.vertices[0].y, this.vertices[1].y) <= min.y
-			|| min.y <= Math.min(this.vertices[0].y, this.vertices[1].y))
+		if(Math.max(this.vertices[0].x, this.vertices[1].x) < min.x
+			|| min.x < Math.min(this.vertices[0].x, this.vertices[1].x)
+			|| Math.max(this.vertices[0].y, this.vertices[1].y) < min.y
+			|| min.y < Math.min(this.vertices[0].y, this.vertices[1].y))
 			min = null;
 		for(int i = 1; i < this.vertices.length; i++)
 		{
@@ -40,7 +40,9 @@ public abstract class Glass
 					&& v.x <= Math.max(this.vertices[i].x, this.vertices[(i+1)%this.vertices.length].x)
 					&& Math.min(this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].y) <= v.y
 					&& v.y <= Math.max(this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].y)
-					&& (v.x-laser.x)/laser.nx > 0F && (v.y-laser.y/laser.ny) > 0F && (min == null || (v.x-laser.x)*(v.x-laser.x)+(v.y-laser.y)*(v.y-laser.y) < (min.x-laser.x)*(min.x-laser.x)+(min.y-laser.y)*(min.y-laser.y)))
+					&& (v.x-laser.x)/laser.ny < 0F
+					&& (v.y-laser.y)/laser.nx > 0F
+					&& (min == null || (v.x-laser.x)*(v.x-laser.x)+(v.y-laser.y)*(v.y-laser.y) < (min.x-laser.x)*(min.x-laser.x)+(min.y-laser.y)*(min.y-laser.y)))
 					min = v;
 			}
 		}
