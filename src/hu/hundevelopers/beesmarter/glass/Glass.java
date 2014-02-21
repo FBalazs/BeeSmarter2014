@@ -29,6 +29,11 @@ public abstract class Glass
 		for(int i = 1; i < this.vertices.length; i++)
 		{
 			Vertex v = MathHelper.getLineIntersection(laser, new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]));
+			if((int)v.x < (int)Math.min(this.vertices[i].x, this.vertices[(i+1)%this.vertices.length].x)
+				|| (int)v.x > (int)Math.max(this.vertices[i].x, this.vertices[(i+1)%this.vertices.length].x)
+				|| (int)v.y < (int)Math.min(this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].y)
+				|| (int)v.y > (int)Math.max(this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].y))
+				v = null;
 			if(v != null && (min == null || (min.x-laser.x1)*(min.x-laser.x1) + (min.y-laser.y1)*(min.y-laser.y1) > (v.x-laser.x1)*(v.x-laser.x1) + (v.y-laser.y1)*(v.y-laser.y1)))
 				min = v;
 		}
@@ -42,6 +47,11 @@ public abstract class Glass
 		for(int i = 1; i < this.vertices.length; i++)
 		{
 			Vertex v = MathHelper.getLineIntersection(laser, new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]));
+			if((int)v.x < (int)Math.min(this.vertices[i].x, this.vertices[(i+1)%this.vertices.length].x)
+				|| (int)v.x > (int)Math.max(this.vertices[i].x, this.vertices[(i+1)%this.vertices.length].x)
+				|| (int)v.y < (int)Math.min(this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].y)
+				|| (int)v.y > (int)Math.max(this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].y))
+				v = null;
 			if(v != null && (vmin == null || (vmin.x-laser.x1)*(vmin.x-laser.x1) + (vmin.y-laser.y1)*(vmin.y-laser.y1) > (v.x-laser.x1)*(v.x-laser.x1) + (v.y-laser.y1)*(v.y-laser.y1)))
 			{
 				vmin = v;
@@ -49,10 +59,10 @@ public abstract class Glass
 			}
 		}
 		if(vmin != null)
-			this.handleLaserCollision(min, laser);
+			this.handleLaserCollision(min, laser, vmin);
 	}
 	
-	public abstract void handleLaserCollision(int side, Line laser);
+	public abstract void handleLaserCollision(int side, Line laser, Vertex V);
 	
 	public void rotate(int amount)
 	{
