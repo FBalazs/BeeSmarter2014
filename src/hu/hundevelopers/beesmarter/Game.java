@@ -4,6 +4,7 @@ import hu.hundevelopers.beesmarter.glass.Glass;
 import hu.hundevelopers.beesmarter.glass.GlassSquareHalfMirror;
 import hu.hundevelopers.beesmarter.glass.GlassSquareMirror;
 import hu.hundevelopers.beesmarter.glass.GlassSquarePrism;
+import hu.hundevelopers.beesmarter.glass.GlassTrianglePrism;
 import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.Vertex;
 
@@ -50,6 +51,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.glasses.add(new GlassSquareHalfMirror(width-tilesize/2, tilesize*3/2, 0));
 		this.glasses.add(new GlassSquareMirror(width, tilesize*3, 45));
 		this.glasses.add(new GlassSquarePrism(width/2, tilesize*5/2, 0));
+		this.glasses.add(new GlassTrianglePrism(width/2, tilesize*9/2, 45));
 	}
 	
 	public void update()
