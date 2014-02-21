@@ -12,11 +12,11 @@ public class Line
 		this.ny = ny;
 	}
 	
-	public Line(float x1, float y1, float x2, float y2, Object o)
+	public Line(Vertex v1, Vertex v2)
 	{
-		this.x = x1;
-		this.y = y1;
-		this.nx = (y2-y1);
-		this.ny = (x1-x2);
+		this.x = v1.x;
+		this.y = v1.y;
+		this.nx = (v2.y-v1.y);
+		this.ny = (v1.x-v2.x);
 	}
 }
