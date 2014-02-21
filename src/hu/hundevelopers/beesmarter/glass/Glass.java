@@ -35,7 +35,24 @@ public abstract class Glass
 		return min;
 	}
 	
-	public abstract void handleLaserCollision(Line laser);
+	public void handleLaserCollision(Line laser)
+	{
+		int min = 0;
+		Vertex vmin = MathHelper.getLineIntersection(laser, new Line(this.vertices[0], this.vertices[1]));
+		for(int i = 1; i < this.vertices.length; i++)
+		{
+			Vertex v = MathHelper.getLineIntersection(laser, new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]));
+			if(v != null && (vmin == null || (vmin.x-laser.x1)*(vmin.x-laser.x1) + (vmin.y-laser.y1)*(vmin.y-laser.y1) > (v.x-laser.x1)*(v.x-laser.x1) + (v.y-laser.y1)*(v.y-laser.y1)))
+			{
+				vmin = v;
+				min = i;
+			}
+		}
+		if(vmin != null)
+			this.handleLaserCollision(min);
+	}
+	
+	public abstract void handleLaserCollision(int side);
 	
 	public void rotate(int amount)
 	{

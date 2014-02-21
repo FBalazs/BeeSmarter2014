@@ -10,7 +10,6 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.GestureDetector;
@@ -50,10 +49,11 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 			return;
 		canvas.drawColor(Color.BLACK);
 		
-		Glass g = new GlassSquareMirror(width/2, height/2, 0);
-		Line l = new Line(width/2, height/10, width/2, height);
+		Glass g = new GlassSquareMirror(width/2, height/2, 22);
+		Line l = new Line(width/10, height/2, width, height/2);
 		
 		Paint paint = new Paint();
+		paint.setAntiAlias(true);
 		paint.setARGB(255, 255, 0, 0);
 		paint.setStrokeWidth(2F);
 		Vertex v = g.getLaserInterSectionPoint(l);

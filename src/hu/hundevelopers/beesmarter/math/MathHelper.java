@@ -32,14 +32,14 @@ public class MathHelper
 		y = ((l1.x1*l1.y2-l1.y1*l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1*l2.y2-l2.y1*l2.x2))/((l1.x1-l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1-l2.x2));
 		if(Float.isNaN(x) || Float.isNaN(y))
 			return null;
-		if(x < Math.min(l1.x1, l1.x2)
-			|| x > Math.max(l1.x1, l1.x2)
-			|| x < Math.min(l2.x1, l2.x2)
-			|| x > Math.max(l2.x1, l2.x2)
-			|| y < Math.min(l1.y1, l1.y2)
-			|| y > Math.max(l1.y1, l1.y2)
-			|| y < Math.min(l2.y1, l2.y2)
-			|| y > Math.max(l2.y1, l2.y2))
+		if((int)x < (int)Math.min(l1.x1, l1.x2)
+			|| (int)x > (int)Math.max(l1.x1, l1.x2)
+			|| (int)x < (int)Math.min(l2.x1, l2.x2)
+			|| (int)x > (int)Math.max(l2.x1, l2.x2)
+			|| (int)y < (int)Math.min(l1.y1, l1.y2)
+			|| (int)y > (int)Math.max(l1.y1, l1.y2)
+			|| (int)y < (int)Math.min(l2.y1, l2.y2)
+			|| (int)y > (int)Math.max(l2.y1, l2.y2))
 			return null;
 		return new Vertex(x, y);
 	}
