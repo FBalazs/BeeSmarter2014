@@ -1,6 +1,7 @@
 package hu.hundevelopers.beesmarter;
 
 import hu.hundevelopers.beesmarter.glass.Glass;
+import hu.hundevelopers.beesmarter.glass.GlassSquareHalfMirror;
 import hu.hundevelopers.beesmarter.glass.GlassSquareMirror;
 import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.Vertex;
@@ -40,13 +41,12 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	{
 		this.width = width;
 		this.height = height;
-		int n = this.height/this.tilesize;
-		for(int i = 0; i < n; i++)
-		{
-			this.glasses.add(new GlassSquareMirror(tilesize/2, tilesize/2+i*tilesize, 0));
-			this.glasses.add(new GlassSquareMirror(width-tilesize/2, tilesize/2+i*tilesize, 0));
-		}
-		//this.glasses.add(new GlassSquareMirror(width-tilesize/2, tilesize/2, 0));
+		this.tilesize = Math.min(width, height)/6;
+		
+		this.glasses.add(new GlassSquareHalfMirror(width/2, tilesize/2, 0));
+		this.glasses.add(new GlassSquareMirror(tilesize/4, tilesize, 0));
+		this.glasses.add(new GlassSquareMirror(width, 0, 45));
+		this.glasses.add(new GlassSquareHalfMirror(width-tilesize/2, tilesize*3/2, 0));
 	}
 	
 	public void update()
@@ -54,7 +54,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(width/2, tilesize/2, width, tilesize/2));
+		this.claser.add(new Line(0, 0, width/2-tilesize/2, tilesize/2));
 		
 		int s = 0;
 		while(this.claser.size() > 0)
