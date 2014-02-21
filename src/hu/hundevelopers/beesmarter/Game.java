@@ -78,13 +78,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.squaredTouchRange = this.tilesize*this.tilesize/2;
 		
 		this.glasses.clear();
-		this.glasses.add(new GlassSquareHalfMirror(width/2, tilesize/2, 0));
-		this.glasses.add(new GlassSquareMirror(tilesize/4, tilesize, 0));
-		this.glasses.add(new GlassSquareMirror(width, 0, 45));
-		this.glasses.add(new GlassSquareHalfMirror(width-tilesize/2, tilesize*3/2, 0));
-		this.glasses.add(new GlassSquareMirror(width, tilesize*3, 45));
-		this.glasses.add(new GlassSquarePrism(width/2, tilesize*5/2, 0));
-		this.glasses.add(new GlassTrianglePrism(width/2, tilesize*9/2, 45));
+		this.glasses.add(new GlassSquareMirror(tilesize/2, size+tilesize/2, 0));
+		this.glasses.add(new GlassSquareMirror(tilesize*3/2, size+tilesize/2, 45));
+		this.glasses.add(new GlassSquareHalfMirror(tilesize*5/2, size+tilesize/2, 0));
+		this.glasses.add(new GlassSquarePrism(tilesize*7/2, size+tilesize/2, 45));
+		this.glasses.add(new GlassTrianglePrism(tilesize*9/2, size+tilesize/2, 225));
+		this.glasses.add(new GlassTrianglePrism(tilesize*11/2, size+tilesize/2, 315));
 	}
 	
 	public void update()
@@ -92,7 +91,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(tilesize/2, tilesize/2, size, tilesize/2));
+		this.claser.add(new Line(size/2, size/2, size, size));
 		
 		while(this.claser.size() > 0)
 		{
