@@ -40,7 +40,8 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	{
 		this.width = width;
 		this.height = height;
-		this.glasses.add(new GlassSquareMirror(width/2, height/2-tilesize/2, 0));
+		this.glasses.add(new GlassSquareMirror(tilesize/2, height/2, 0));
+		this.glasses.add(new GlassSquareMirror(width-tilesize/2, height/2, 0));
 	}
 	
 	public void update()
@@ -48,22 +49,8 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(width/10, height/2+1F, width, height/2+1F));
-		Vertex v = this.glasses.get(0).getLaserInterSectionPoint(this.claser.get(0));
-		if(v == null)
-		{
-			this.laser.add(this.claser.get(0));
-			this.claser.remove(0);
-		}
-		else
-		{
-			this.glasses.get(0).handleLaserCollision(this.claser.get(0));
-			this.laser.add(new Line(this.claser.get(0).x1, this.claser.get(0).y1, v.x, v.y));
-			this.claser.remove(0);
-		}
-		if(this.claser.size() > 0)
-			this.laser.add(this.claser.get(0));
-		/*while(this.claser.size() > 0)
+		this.claser.add(new Line(width/10, height/10, width-tilesize/2, height/2-tilesize/2));
+		while(this.claser.size() > 0)
 		{
 			int n = this.claser.size();
 			for(int i = 0; i < n; i++)
@@ -73,10 +60,14 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 				for(int j = 0; j < this.glasses.size(); j++)
 				{
 					Vertex v = this.glasses.get(j).getLaserInterSectionPoint(this.claser.get(0));
-					if(v != null && (vmin == null || (v.x-this.claser.get(0).x1)*(v.x-this.claser.get(0).x1) + (v.y-this.claser.get(0).y1)*(v.y-this.claser.get(0).y1) < (vmin.x-this.claser.get(0).x1)*(vmin.x-this.claser.get(0).x1) + (vmin.y-this.claser.get(0).y1)*(vmin.y-this.claser.get(0).y1)))
+					if(v != null)
 					{
-						min = j;
-						vmin = v;
+						if((int)v.x != (int)this.claser.get(0).x1 || (int)v.y != (int)this.claser.get(0).y1)
+							if((vmin == null || (v.x-this.claser.get(0).x1)*(v.x-this.claser.get(0).x1) + (v.y-this.claser.get(0).y1)*(v.y-this.claser.get(0).y1) < (vmin.x-this.claser.get(0).x1)*(vmin.x-this.claser.get(0).x1) + (vmin.y-this.claser.get(0).y1)*(vmin.y-this.claser.get(0).y1)))
+							{
+								min = j;
+								vmin = v;
+							}
 					}
 				}
 				if(min != -1)
@@ -91,7 +82,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 					this.claser.remove(0);
 				}
 			}
-		}*/
+		}
 	}
 	
 	public void render()
