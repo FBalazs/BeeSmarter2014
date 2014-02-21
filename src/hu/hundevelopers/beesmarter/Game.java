@@ -50,17 +50,19 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 			return;
 		canvas.drawColor(Color.BLACK);
 		
-		Glass g = new GlassSquareMirror(width/2, height/2, 22);
-		Line l = new Line(width/2, height/10, 1F, 0F);
+		Glass g = new GlassSquareMirror(width/2, height/2, 0);
+		Line l = new Line(width/2, height/10, width/2, height);
 		
 		Paint paint = new Paint();
 		paint.setARGB(255, 255, 0, 0);
 		paint.setStrokeWidth(2F);
 		Vertex v = g.getLaserInterSectionPoint(l);
-		if(v == null)
-			v = new Vertex(l.x-l.ny*1000, l.y+l.nx*1000);
-		canvas.drawLine(l.x, l.y, v.x, v.y, paint);
-		Log.d("DEBUG", ""+l.x+" "+l.y+" "+v.x+" "+v.y);
+		if(v != null)
+		{
+			l.x2 = v.x;
+			l.y2 = v.y;
+		}
+		canvas.drawLine(l.x1, l.y1, l.x2, l.y2, paint);
 		g.render(canvas);
 		
 		this.holder.unlockCanvasAndPost(canvas);

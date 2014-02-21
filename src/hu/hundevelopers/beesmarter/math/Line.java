@@ -2,21 +2,18 @@ package hu.hundevelopers.beesmarter.math;
 
 public class Line
 {
-	public float x, y, nx, ny;
-	
-	public Line(float x, float y, float nx, float ny)
-	{
-		this.x = x;
-		this.y = y;
-		this.nx = nx;
-		this.ny = ny;
-	}
+	public float x1, y1, x2, y2;
 	
 	public Line(Vertex v1, Vertex v2)
 	{
-		this.x = v1.x;
-		this.y = v1.y;
-		this.nx = (v2.y-v1.y);
-		this.ny = (v1.x-v2.x);
+		this(v1.x, v1.y, v2.x, v2.y);
+	}
+	
+	public Line(float x1, float y1, float x2, float y2)
+	{
+		this.x1 = x1;
+		this.y1 = y1;
+		this.x2 = x2;
+		this.y2 = y2;
 	}
 }

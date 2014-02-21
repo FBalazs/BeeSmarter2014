@@ -27,12 +27,20 @@ public class MathHelper
 	
 	public static Vertex getLineIntersection(Line l1, Line l2)
 	{
-		if(l1.nx/l1.ny == l2.nx/l2.ny)
-			return null;
 		float x, y;
-		y = (l2.nx*(l1.nx*l1.x+l1.ny*l1.y) - l1.nx*(l2.nx*l2.x+l2.ny*l2.y))/(l2.nx*l1.ny-l2.ny*l1.nx);
-		x = (l1.nx*l1.x+l1.ny*l1.y-l1.ny*y)/l1.nx;
-		//y = (n1*((y2-y1)*x1+(x1-x2)*y1) - (y2-y1)*(n1*p+n2*q))/(n1*(x1-x2)-n2*(y2-y1));
+		x = ((l1.x1*l1.y2-l1.y1*l1.x2)*(l2.x1-l2.x2)-(l1.x1-l1.x2)*(l2.x1*l2.y2-l2.y1*l2.x2))/((l1.x1-l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1-l2.x2));
+		y = ((l1.x1*l1.y2-l1.y1*l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1*l2.y2-l2.y1*l2.x2))/((l1.x1-l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1-l2.x2));
+		if(Float.isNaN(x) || Float.isNaN(y))
+			return null;
+		if(x < Math.min(l1.x1, l1.x2)
+			|| x > Math.max(l1.x1, l1.x2)
+			|| x < Math.min(l2.x1, l2.x2)
+			|| x > Math.max(l2.x1, l2.x2)
+			|| y < Math.min(l1.y1, l1.y2)
+			|| y > Math.max(l1.y1, l1.y2)
+			|| y < Math.min(l2.y1, l2.y2)
+			|| y > Math.max(l2.y1, l2.y2))
+			return null;
 		return new Vertex(x, y);
 	}
 }
