@@ -67,7 +67,7 @@ public abstract class Glass
 	
 	public void rotate(int amount)
 	{
-		this.deg += amount;
+		this.deg = amount;
 		this.calculateVertices();
 	}
 	
