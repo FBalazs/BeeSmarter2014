@@ -22,7 +22,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	
 	
 	public SurfaceHolder holder;
-	public int width, height, tilesize = 64;
+	public int width, height, tilesize = 32;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
 	
@@ -39,8 +39,12 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	{
 		this.width = width;
 		this.height = height;
-		this.glasses.add(new GlassSquareMirror(tilesize/2, height/2, 0));
-		this.glasses.add(new GlassSquareMirror(width-tilesize/2, height/2, 0));
+		int n = this.height/this.tilesize;
+		for(int i = 0; i < n; i++)
+		{
+			this.glasses.add(new GlassSquareMirror(tilesize/2, tilesize/2+i*tilesize, 0));
+			this.glasses.add(new GlassSquareMirror(width-tilesize/2, tilesize/2+i*tilesize, 0));
+		}
 	}
 	
 	public void update()
@@ -48,7 +52,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(width/10, height/2-tilesize*4/7, width-tilesize, height/2-tilesize/2+1F));
+		this.claser.add(new Line(width/2, tilesize/2, width-tilesize, tilesize*3/2));
 		
 		while(this.claser.size() > 0)
 		{
