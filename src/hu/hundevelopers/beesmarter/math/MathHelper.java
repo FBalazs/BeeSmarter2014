@@ -37,9 +37,9 @@ public class MathHelper
 	
 	public static boolean isIntersectionPointOnSegment(Line l, Vertex v)
 	{
-		return (v.x >= Math.min(l.x1, l.x2)
-				&& v.x <= Math.max(l.x1, l.x2)
-				&& v.y >= Math.min(l.y1, l.y2)
-				&& v.y <= Math.max(l.y1, l.y2));
+		return ((int)v.x >= (int)Math.min(l.x1, l.x2)
+				&& (int)v.x <= (int)Math.max(l.x1, l.x2)
+				&& (int)v.y >= (int)Math.min(l.y1, l.y2)
+				&& (int)v.y <= (int)Math.max(l.y1, l.y2));
 	}
 }
