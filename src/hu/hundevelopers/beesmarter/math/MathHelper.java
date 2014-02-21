@@ -32,15 +32,14 @@ public class MathHelper
 		y = ((l1.x1*l1.y2-l1.y1*l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1*l2.y2-l2.y1*l2.x2))/((l1.x1-l1.x2)*(l2.y1-l2.y2)-(l1.y1-l1.y2)*(l2.x1-l2.x2));
 		if(Float.isNaN(x) || Float.isNaN(y))
 			return null;
-		/*if((int)x < (int)Math.min(l1.x1, l1.x2)
-			|| (int)x > (int)Math.max(l1.x1, l1.x2)
-			|| (int)x < (int)Math.min(l2.x1, l2.x2)
-			|| (int)x > (int)Math.max(l2.x1, l2.x2)
-			|| (int)y < (int)Math.min(l1.y1, l1.y2)
-			|| (int)y > (int)Math.max(l1.y1, l1.y2)
-			|| (int)y < (int)Math.min(l2.y1, l2.y2)
-			|| (int)y > (int)Math.max(l2.y1, l2.y2))
-			return null;*/
 		return new Vertex(x, y);
+	}
+	
+	public static boolean isIntersectionPointOnSegment(Line l, Vertex v)
+	{
+		return (v.x >= Math.min(l.x1, l.x2)
+				&& v.x <= Math.max(l.x1, l.x2)
+				&& v.y >= Math.min(l.y1, l.y2)
+				&& v.y <= Math.max(l.y1, l.y2));
 	}
 }

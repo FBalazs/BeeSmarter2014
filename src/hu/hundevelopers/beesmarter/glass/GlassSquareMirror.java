@@ -37,6 +37,18 @@ public class GlassSquareMirror extends Glass
 		Vertex k = MathHelper.getLineIntersection(m, m2);
 		// a tükrözött pont
 		Vertex t = new Vertex(laser.x1+2*(k.x-laser.x1), laser.y1+2*(k.y-laser.y1));
-		Game.instance.claser.add(new Line(v, new Vertex(v.x+100*(t.x-v.x), v.y+100*(t.y-v.y))));
+		float dx = (t.x-v.x);
+		float dy = (t.y-v.y);
+		if(dx == 0)
+			dy = Game.instance.height;
+		else if(dy == 0)
+			dx = Game.instance.width;
+		else
+		{
+			float s = Math.max(Game.instance.width/dx, Game.instance.height/dy);
+			dx *= s;
+			dy *= s;
+		}
+		Game.instance.claser.add(new Line(v, new Vertex(v.x+dx, v.y+dy)));
 	}
 }

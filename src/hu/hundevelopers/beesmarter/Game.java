@@ -11,7 +11,6 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.GestureDetector;
@@ -49,22 +48,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(width/10, height/2-tilesize*3/4, width-tilesize, height/2-tilesize/2));
-		
-		/*Vertex v = this.glasses.get(0).getLaserInterSectionPoint(this.claser.get(0));
-		if(v == null)
-		{
-			this.laser.add(this.claser.get(0));
-			this.claser.remove(0);
-		}
-		else
-		{
-			this.glasses.get(0).handleLaserCollision(this.claser.get(0));
-			this.laser.add(new Line(this.claser.get(0).x1, this.claser.get(0).y1, v.x, v.y));
-			this.claser.remove(0);
-		}
-		if(this.claser.size() > 0)
-			this.laser.add(this.claser.get(0));*/
+		this.claser.add(new Line(width/10, height/2-tilesize*4/7, width-tilesize, height/2-tilesize/2+1F));
 		
 		while(this.claser.size() > 0)
 		{
