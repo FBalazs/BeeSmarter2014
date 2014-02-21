@@ -11,6 +11,7 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.GestureDetector;
@@ -22,7 +23,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 	
 	
 	public SurfaceHolder holder;
-	public int width, height, tilesize = 32;
+	public int width, height, tilesize = 64;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
 	
@@ -45,6 +46,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 			this.glasses.add(new GlassSquareMirror(tilesize/2, tilesize/2+i*tilesize, 0));
 			this.glasses.add(new GlassSquareMirror(width-tilesize/2, tilesize/2+i*tilesize, 0));
 		}
+		//this.glasses.add(new GlassSquareMirror(width-tilesize/2, tilesize/2, 0));
 	}
 	
 	public void update()
@@ -52,8 +54,9 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.laser.clear();
 		this.claser.clear();
 		
-		this.claser.add(new Line(width/2, tilesize/2, width-tilesize, tilesize*3/2));
+		this.claser.add(new Line(width/2, tilesize/2, width, tilesize/2));
 		
+		int s = 0;
 		while(this.claser.size() > 0)
 		{
 			int n = this.claser.size();
@@ -76,8 +79,12 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 				}
 				if(min != -1)
 				{
-					this.laser.add(new Line(this.claser.get(0).x1, this.claser.get(0).y1, vmin.x, vmin.y));
-					this.glasses.get(min).handleLaserCollision(this.claser.get(0));
+					Line nl = new Line(this.claser.get(0).x1, this.claser.get(0).y1, vmin.x, vmin.y);
+					if(!this.laser.contains(nl))
+					{
+						this.laser.add(nl);
+						this.glasses.get(min).handleLaserCollision(this.claser.get(0));
+					}
 					this.claser.remove(0);
 				}
 				else
@@ -104,22 +111,6 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 			canvas.drawLine(this.laser.get(i).x1, this.laser.get(i).y1, this.laser.get(i).x2, this.laser.get(i).y2, paint);
 		for(int i = 0; i < this.glasses.size(); i++)
 			this.glasses.get(i).render(canvas);
-		
-		/*Glass g = new GlassSquareMirror(width/2, height/2, 45);
-		Line l = new Line(width/10, height/2, width, height/2);
-		
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setARGB(255, 255, 0, 0);
-		paint.setStrokeWidth(2F);
-		Vertex v = g.getLaserInterSectionPoint(l);
-		if(v != null)
-		{
-			l.x2 = v.x;
-			l.y2 = v.y;
-		}
-		canvas.drawLine(l.x1, l.y1, l.x2, l.y2, paint);
-		g.render(canvas);*/
 		
 		this.holder.unlockCanvasAndPost(canvas);
 	}
