@@ -9,12 +9,15 @@ import hu.hundevelopers.beesmarter.math.Vertex;
 
 public abstract class Glass
 {
-	public int x, y, deg, alpha;
+	public int x, y, deg, alpha, r, g, b;
 	public Vertex[] vertices;
 	
 	public Glass(int x, int y, int deg)
 	{
 		this.alpha = 255;
+		this.r = 255;
+		this.g = 255;
+		this.b = 255;
 		this.x = x;
 		this.y = y;
 		this.deg = deg;
@@ -92,7 +95,7 @@ public abstract class Glass
 		}
 		path.close();
 		
-		paint.setARGB(this.alpha, 255, 255, 255);
+		paint.setARGB(this.alpha, this.r, this.g, this.b);
 		canvas.drawPath(path, paint);
 	}
 }

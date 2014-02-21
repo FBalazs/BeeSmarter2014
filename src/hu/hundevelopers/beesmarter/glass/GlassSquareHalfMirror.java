@@ -45,7 +45,7 @@ public class GlassSquareHalfMirror extends Glass
 			dx = Math.abs(dx)/dx*Game.instance.width;
 		else
 		{
-			float s = Math.max(Game.instance.width/dx, Game.instance.height/dy);
+			float s = Math.max(Game.instance.width/Math.abs(dx), Game.instance.height/Math.abs(dy));
 			dx *= s;
 			dy *= s;
 		}
@@ -62,7 +62,7 @@ public class GlassSquareHalfMirror extends Glass
 			dx = Math.abs(dx)/dx*Game.instance.width;
 		else
 		{
-			float s = Math.max(Game.instance.width/dx, Game.instance.height/dy);
+			float s = Math.max(Game.instance.width/Math.abs(dx), Game.instance.height/Math.abs(dy));
 			dx *= s;
 			dy *= s;
 		}

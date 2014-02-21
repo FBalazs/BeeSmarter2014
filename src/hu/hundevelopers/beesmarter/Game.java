@@ -3,6 +3,7 @@ package hu.hundevelopers.beesmarter;
 import hu.hundevelopers.beesmarter.glass.Glass;
 import hu.hundevelopers.beesmarter.glass.GlassSquareHalfMirror;
 import hu.hundevelopers.beesmarter.glass.GlassSquareMirror;
+import hu.hundevelopers.beesmarter.glass.GlassSquarePrism;
 import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.Vertex;
 
@@ -47,6 +48,8 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		this.glasses.add(new GlassSquareMirror(tilesize/4, tilesize, 0));
 		this.glasses.add(new GlassSquareMirror(width, 0, 45));
 		this.glasses.add(new GlassSquareHalfMirror(width-tilesize/2, tilesize*3/2, 0));
+		this.glasses.add(new GlassSquareMirror(width, tilesize*3, 45));
+		this.glasses.add(new GlassSquarePrism(width/2, tilesize*5/2, 0));
 	}
 	
 	public void update()
@@ -106,7 +109,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setARGB(255, 255, 0, 0);
-		paint.setStrokeWidth(2F);
+		paint.setStrokeWidth(3F);
 		for(int i = 0; i < this.laser.size(); i++)
 			canvas.drawLine(this.laser.get(i).x1, this.laser.get(i).y1, this.laser.get(i).x2, this.laser.get(i).y2, paint);
 		for(int i = 0; i < this.glasses.size(); i++)
