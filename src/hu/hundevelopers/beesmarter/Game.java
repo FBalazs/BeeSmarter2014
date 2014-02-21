@@ -49,7 +49,7 @@ public class Game implements GestureDetector.OnGestureListener, GestureDetector.
 			return;
 		canvas.drawColor(Color.BLACK);
 		
-		Glass g = new GlassSquareMirror(width/2, height/2, 22);
+		Glass g = new GlassSquareMirror(width/2, height/2, 45);
 		Line l = new Line(width/10, height/2, width, height/2);
 		
 		Paint paint = new Paint();

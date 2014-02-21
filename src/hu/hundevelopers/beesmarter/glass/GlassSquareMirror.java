@@ -1,6 +1,7 @@
 package hu.hundevelopers.beesmarter.glass;
 
 import hu.hundevelopers.beesmarter.Game;
+import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.MathHelper;
 import hu.hundevelopers.beesmarter.math.Vertex;
 
@@ -25,7 +26,7 @@ public class GlassSquareMirror extends Glass
 	}
 
 	@Override
-	public void handleLaserCollision(int side)
+	public void handleLaserCollision(int side, Line laser)
 	{
 		
 	}

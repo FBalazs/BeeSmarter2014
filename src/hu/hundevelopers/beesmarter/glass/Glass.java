@@ -49,10 +49,10 @@ public abstract class Glass
 			}
 		}
 		if(vmin != null)
-			this.handleLaserCollision(min);
+			this.handleLaserCollision(min, laser);
 	}
 	
-	public abstract void handleLaserCollision(int side);
+	public abstract void handleLaserCollision(int side, Line laser);
 	
 	public void rotate(int amount)
 	{
