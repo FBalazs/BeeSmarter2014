@@ -372,7 +372,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 					if(!g.isColliding())
 					{
 						this.paletteSelection = -1;
-						this.selectedGlass = g.id;
+						this.selectedGlass = this.glasses.size();
 						Game.instance.glasses.add(g);
 						this.update();
 						this.render();
