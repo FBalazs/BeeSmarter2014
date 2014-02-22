@@ -37,10 +37,10 @@ public class MathHelper
 	
 	public static boolean isIntersectionPointOnSegment(Line l, Vertex v)
 	{
-		return (Math.round(v.x) >= Math.round(Math.min(l.x1, l.x2))-1
-				&& Math.round(v.x) <= Math.round(Math.max(l.x1, l.x2))+1
-				&& Math.round(v.y) >= Math.round(Math.min(l.y1, l.y2))-1
-				&& Math.round(v.y) <= Math.round(Math.max(l.y1, l.y2))+1);
+		return (v.x >= Math.min(l.x1, l.x2)-1
+				&& v.x <= Math.max(l.x1, l.x2)+1
+				&& v.y >= Math.min(l.y1, l.y2)-1
+				&& v.y <= Math.max(l.y1, l.y2)+1);
 	}
 	
 	public static float getLineAndVertexSquaredDistance(Line l, Vertex v)

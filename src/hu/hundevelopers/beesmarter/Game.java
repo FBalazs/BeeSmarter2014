@@ -35,7 +35,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	
 	
-	public int width, height, tileres, tilenumber = 6, resolution = 600, tilesize, paletteSelection;
+	public int width, height, tileres, tilenumber = 6, resolution = 6000, tilesize, paletteSelection;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
 	public List<Line> startLasers;
