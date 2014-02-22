@@ -11,6 +11,7 @@ public abstract class Glass
 {
 	public int x, y, deg, alpha, r, g, b;
 	public Vertex[] vertices;
+	public boolean collide;
 	
 	public Glass(int x, int y, int deg)
 	{
@@ -22,6 +23,11 @@ public abstract class Glass
 		this.y = y;
 		this.deg = deg;
 		this.calculateVertices();
+	}
+	
+	public boolean isMoveable()
+	{
+		return true;
 	}
 	
 	public abstract void calculateVertices();
