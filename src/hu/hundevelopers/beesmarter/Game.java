@@ -35,8 +35,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	
 	
-	public int width, height, tileres, tilenumber = 6, resolution = 600, tilesize, palettePos = 0, paletteGrab;
-	public List<Glass> glasses, palette;
+	public int width, height, tileres, tilenumber = 6, resolution = 600, tilesize;
+	public List<Glass> glasses;
 	public List<Line> laser, claser;
 	public List<Line> startLasers;
 	public int size = 600;
@@ -63,7 +63,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		this.laser = new ArrayList<Line>();
 		this.claser = new ArrayList<Line>();
 		this.startLasers = new ArrayList<Line>();
-		this.palette = new ArrayList<Glass>();
 		this.selectedGlass = -1;
 		this.selectionMode = false;
 	}
@@ -173,6 +172,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			this.btnChange2 = new Rect(this.tilesize, this.height-this.tilesize, 2*this.tilesize, this.height);
 			this.btnChange3 = new Rect(2*this.tilesize, this.height-this.tilesize, 3*this.tilesize, this.height);
 			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
+			this.paletteRect = new Rect(2, this.size+2, this.width-2, this.size+this.tilesize*3/2+4);
 		}
 		else
 		{
@@ -180,6 +180,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			this.btnChange2 = new Rect(this.width-this.tilesize, this.tilesize, this.width, 2*this.tilesize);
 			this.btnChange3 = new Rect(this.width-this.tilesize, 2*this.tilesize, this.width, 3*this.tilesize);
 			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
+			this.paletteRect = new Rect(this.size+2, 2, this.size+this.tilesize*3/2+4, this.height-2);
 		}
 	}
 	
@@ -264,6 +265,23 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				canvas.drawBitmap(bitmapRotate, new Rect(0, 0, bitmapRotate.getWidth(), bitmapRotate.getHeight()), dst, paint);
 			else
 				canvas.drawBitmap(bitmapMove, new Rect(0, 0, bitmapMove.getWidth(), bitmapMove.getHeight()), dst, paint);
+		}
+		
+		paint.setARGB(128, 0, 0, 0);
+		canvas.drawRect(this.paletteRect, paint);
+		if(this.width < this.height)
+		{
+			new GlassSquareMirror(-1, this.paletteRect.left*Game.instance.resolution/Game.instance.size+this.paletteRect.width()/5*Game.instance.resolution/Game.instance.size, this.paletteRect.centerY()*Game.instance.resolution/Game.instance.size, 0).render(canvas);
+			new GlassSquareHalfMirror(-1, this.paletteRect.left*Game.instance.resolution/Game.instance.size+this.paletteRect.width()*Game.instance.resolution/Game.instance.size*2/5, this.paletteRect.centerY()*Game.instance.resolution/Game.instance.size, 0).render(canvas);
+			new GlassSquarePrism(-1, this.paletteRect.left*Game.instance.resolution/Game.instance.size+this.paletteRect.width()*Game.instance.resolution/Game.instance.size*3/5, this.paletteRect.centerY()*Game.instance.resolution/Game.instance.size, 0).render(canvas);
+			new GlassTrianglePrism(-1, this.paletteRect.left*Game.instance.resolution/Game.instance.size+this.paletteRect.width()*Game.instance.resolution/Game.instance.size*4/5, this.paletteRect.centerY()*Game.instance.resolution/Game.instance.size, 0).render(canvas);
+		}
+		else
+		{
+			new GlassSquareMirror(-1, this.paletteRect.centerX()*Game.instance.resolution/Game.instance.size, this.paletteRect.top*Game.instance.resolution/Game.instance.size+this.paletteRect.height()*Game.instance.resolution/Game.instance.size/5, 0).render(canvas);
+			new GlassSquareHalfMirror(-1, this.paletteRect.centerX()*Game.instance.resolution/Game.instance.size, this.paletteRect.top*Game.instance.resolution/Game.instance.size+this.paletteRect.height()*Game.instance.resolution/Game.instance.size*2/5, 0).render(canvas);
+			new GlassSquarePrism(-1, this.paletteRect.centerX()*Game.instance.resolution/Game.instance.size, this.paletteRect.top*Game.instance.resolution/Game.instance.size+this.paletteRect.height()*Game.instance.resolution/Game.instance.size*3/5, 0).render(canvas);
+			new GlassTrianglePrism(-1, this.paletteRect.centerX()*Game.instance.resolution/Game.instance.size, this.paletteRect.top*Game.instance.resolution/Game.instance.size+this.paletteRect.height()*Game.instance.resolution/Game.instance.size*4/5, 0).render(canvas);
 		}
 		
 		paint.setARGB(128, 255, 255, 255);
