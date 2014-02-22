@@ -35,8 +35,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	
 	
-	public int width, height, tileres, tilenumber = 6, resolution = 600;
-	public List<Glass> glasses;
+	public int width, height, tileres, tilenumber = 6, resolution = 600, palettePos = 0, paletteGrab;
+	public List<Glass> glasses, palette;
 	public List<Line> laser, claser;
 	public List<Line> startLasers;
 	public int size = 600;
@@ -44,7 +44,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
 	public boolean selectionMode, rotation45 = true, preciseSelection = false;
 	public Bitmap bitmapArrows, bitmapArrows2, bitmapChange, bitmapDelete;
-	public Rect btnChange, btnDelete;
+	public Rect btnChange, btnDelete, paletteRect;
 	
 	public Game(Context context, AttributeSet attributeSet)
 	{
@@ -61,6 +61,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		this.laser = new ArrayList<Line>();
 		this.claser = new ArrayList<Line>();
 		this.startLasers = new ArrayList<Line>();
+		this.palette = new ArrayList<Glass>();
 		this.selectedGlass = -1;
 		this.selectionMode = false;
 	}
@@ -261,6 +262,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		paint.setARGB(128, 255, 255, 255);
 		canvas.drawBitmap(bitmapChange, new Rect(0, 0, bitmapChange.getWidth(), bitmapChange.getHeight()), this.btnChange, paint);
 		canvas.drawBitmap(bitmapDelete, new Rect(0, 0, bitmapDelete.getWidth(), bitmapDelete.getHeight()), this.btnDelete, paint);
+		
+		paint.setARGB(128, 255, 255, 255);
+		paint.setTextSize(5);
+		canvas.drawText("The icons license can be found at: http://creativecommons.org/licenses/by-nc/3.0/nl/deed.en_GB", 10, 10, paint);
 		
 		this.getHolder().unlockCanvasAndPost(canvas);
 	}
