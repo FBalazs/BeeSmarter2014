@@ -44,6 +44,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
 	public boolean selectionMode, rotation45 = true, preciseSelection = false;
 	public Bitmap bitmapArrows, bitmapArrows2, bitmapChange, bitmapDelete;
+	public Rect btnChange, btnDelete;
 	
 	public Game(Context context, AttributeSet attributeSet)
 	{
@@ -162,6 +163,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		this.size = Math.min(width, height);
 		this.tileres = this.resolution/this.tilenumber;
 		this.selectionRange = Math.round(this.tileres*(float)Math.sqrt(2));
+		this.btnChange = new Rect(0, this.height-64, 64, this.height);
+		this.btnDelete = new Rect(this.width-64, this.height-64, this.width, this.height);
 	}
 	
 	public void update()
@@ -242,10 +245,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		}
 		
 		paint.setARGB(128, 255, 255, 255);
-		Rect dst = new Rect(0, this.height-64, 64, this.height);
-		canvas.drawBitmap(bitmapChange, new Rect(0, 0, bitmapChange.getWidth(), bitmapChange.getHeight()), dst, paint);
-		dst = new Rect(this.width-64, this.height-64, this.width, this.height);
-		canvas.drawBitmap(bitmapDelete, new Rect(0, 0, bitmapDelete.getWidth(), bitmapDelete.getHeight()), dst, paint);
+		canvas.drawBitmap(bitmapChange, new Rect(0, 0, bitmapChange.getWidth(), bitmapChange.getHeight()), this.btnChange, paint);
+		canvas.drawBitmap(bitmapDelete, new Rect(0, 0, bitmapDelete.getWidth(), bitmapDelete.getHeight()), this.btnDelete, paint);
 		
 		this.getHolder().unlockCanvasAndPost(canvas);
 	}
@@ -275,7 +276,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		{
 			if(this.selectedGlass != -1)
 			{
-				if(new Rect(this.width-64, this.height-64, this.width, this.height).contains((int)event.getX(), (int)event.getY()))
+				if(this.btnDelete.contains((int)event.getX(), (int)event.getY()))
 				{
 					this.glasses.remove(this.selectedGlass);
 					this.selectedGlass = -1;
@@ -287,7 +288,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			
 			this.selectedGlass = -1;
 			
-			if(new Rect(0, this.height-64, 64, this.height).contains((int)event.getX(), (int)event.getY()))
+			if(this.btnChange.contains((int)event.getX(), (int)event.getY()))
 			{
 				this.selectionMode = !this.selectionMode;
 				this.render();
@@ -330,7 +331,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				else
 				{
 					int d = -Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
-					this.glasses.get(this.selectedGlass).rotate(d-this.grabDeg);
+					if(this.rotation45)
+						this.glasses.get(this.selectedGlass).rotate((d-this.grabDeg)/45*45);
+					else
+						this.glasses.get(this.selectedGlass).rotate(d-this.grabDeg);
 				}
 				this.update();
 				this.render();
