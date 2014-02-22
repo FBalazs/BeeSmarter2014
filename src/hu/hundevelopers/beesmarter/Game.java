@@ -239,6 +239,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		for(int i = 0; i < this.glasses.size(); i++)
 			this.glasses.get(i).render(canvas);
 		
+		paint.setARGB(255, 64, 64, 64);
+		if(this.width < this.height)
+			canvas.drawRect(new Rect(0, this.size, this.width, this.height), paint);
+		else
+			canvas.drawRect(new Rect(this.size, 0, this.width, this.height), paint);
+		
 		if(this.selectedGlass != -1)
 		{
 			paint.setARGB(128, 255, 255, 255);
