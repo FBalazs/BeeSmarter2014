@@ -154,7 +154,15 @@ public abstract class Glass
 	
 	public boolean isVertexInBounds(float x, float y)
 	{
-		Line l = new Line(x, y, this.x, this.y);
+		float sx = 0, sy = 0; // a súlypont koordinátái
+		for(int i = 0; i < this.vertices.length; i++)
+		{
+			sx += this.vertices[i].x;
+			sy += this.vertices[i].y;
+		}
+		sx /= this.vertices.length;
+		sy /= this.vertices.length;
+		Line l = new Line(x, y, sx, sy);
 		for(int i = 0; i < this.vertices.length; i++)
 		{
 			Line s = new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]);
