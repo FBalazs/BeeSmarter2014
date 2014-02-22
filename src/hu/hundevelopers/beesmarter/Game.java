@@ -350,19 +350,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			else if(this.paletteSelection != -1)
 			{
 				Glass g = null;
+				int id = this.glasses.get(this.glasses.size()-1).id+1;
 				switch(this.paletteSelection)
 				{
 					case 0:
-						g = new GlassSquareMirror(this.glasses.size(), (int)x, (int)y, 0);
+						g = new GlassSquareMirror(id, (int)x, (int)y, 0);
 					break;
 					case 1:
-						g = new GlassSquareHalfMirror(this.glasses.size(), (int)x, (int)y, 0);
+						g = new GlassSquareHalfMirror(id, (int)x, (int)y, 0);
 					break;
 					case 2:
-						g = new GlassSquarePrism(this.glasses.size(), (int)x, (int)y, 0);
+						g = new GlassSquarePrism(id, (int)x, (int)y, 0);
 					break;
 					case 3:
-						g = new GlassTrianglePrism(this.glasses.size(), (int)x, (int)y, 0);
+						g = new GlassTrianglePrism(id, (int)x, (int)y, 0);
 					break;
 				}
 				if(g != null)
