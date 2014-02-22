@@ -216,12 +216,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			return true;
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{
+			this.selectedGlass = -1;
 			if(new Rect(0, this.size, this.tilesize, this.size+this.tilesize).contains((int)event.getX(), (int)event.getY()))
 			{
 				this.selectionMode = !this.selectionMode;
 				return true;
 			}
-			this.selectedGlass = -1;
 			for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
 				if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-event.getX())*(this.glasses.get(i).x-event.getX()) + (this.glasses.get(i).y-event.getY())*(this.glasses.get(i).y-event.getY()) <= this.selectionRange*this.selectionRange)
 					this.selectedGlass = i;
