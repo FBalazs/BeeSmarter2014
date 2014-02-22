@@ -240,7 +240,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				if(!this.selectionMode)
 					this.glasses.get(this.selectedGlass).move((int)event.getX(), (int)event.getY());
 				else
-					this.glasses.get(this.selectedGlass).rotate(-Math.round((float)Math.toDegrees(Math.atan((event.getY()-this.glasses.get(this.selectedGlass).y)/(event.getX()-this.glasses.get(this.selectedGlass).x)))));
+				{
+					int d = -Math.round((float)Math.toDegrees(Math.atan((event.getY()-this.glasses.get(this.selectedGlass).y)/(event.getX()-this.glasses.get(this.selectedGlass).x))));
+					this.glasses.get(this.selectedGlass).rotate(d+(event.getX()-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0));
+				}
 				this.update();
 				this.render();
 				return true;
