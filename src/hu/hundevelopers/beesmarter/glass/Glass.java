@@ -15,12 +15,12 @@ public abstract class Glass
 	
 	public Glass()
 	{
-		this(0, 0, 0);
+		this(0, 0, 0, 0);
 	}
 	
-	public Glass(int x, int y, int deg)
+	public Glass(int id, int x, int y, int deg)
 	{
-		this.id = Game.instance.glasses.size();
+		this.id = id;
 		this.alpha = 255;
 		this.r = 255;
 		this.g = 255;
@@ -146,6 +146,19 @@ public abstract class Glass
 				}
 			}
 		return false;
+	}
+	
+	public boolean isVertexInBounds(float x, float y)
+	{
+		Line l = new Line(x, y, this.x, this.y);
+		for(int i = 0; i < this.vertices.length; i++)
+		{
+			Line s = new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]);
+			Vertex c = MathHelper.getLineIntersection(l, s);
+			if(c != null && MathHelper.isIntersectionPointOnSegment(l, c) && MathHelper.isIntersectionPointOnSegment(s, c))
+				return false;
+		}
+		return true;
 	}
 	
 	public void render(Canvas canvas)

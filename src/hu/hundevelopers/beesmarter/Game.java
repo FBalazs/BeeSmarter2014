@@ -41,8 +41,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public List<Line> startLasers;
 	public int size = 600;
 	
-	public int selectedGlass, selectionRange;
-	public boolean selectionMode;
+	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
+	public boolean selectionMode, rotation45 = true, preciseSelection = true;
 	public Bitmap bitmapArrows, bitmapArrows2, bitmapChange, bitmapDelete;
 	
 	public Game(Context context, AttributeSet attributeSet)
@@ -95,6 +95,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				try
 				{
 					this.glasses.add((Glass)MainActivity.instance.getClassLoader().loadClass(split[3]).newInstance());
+					this.glasses.get(i).id = i;
 					this.glasses.get(i).x = Integer.parseInt(split[0]);
 					this.glasses.get(i).y = Integer.parseInt(split[1]);
 					this.glasses.get(i).rotate(Integer.parseInt(split[2]));
@@ -117,12 +118,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			this.startLasers.clear();
 			this.startLasers.add(new Line(this.resolution/2, this.resolution/2, this.resolution, this.resolution));
 			this.glasses.clear();
-			this.glasses.add(new GlassSquareMirror(this.tileres/2, this.resolution+this.tileres/2, 0));
-			this.glasses.add(new GlassSquareMirror(this.tileres*3/2, this.resolution+this.tileres/2, 45));
-			this.glasses.add(new GlassSquareHalfMirror(this.tileres*5/2, this.resolution+this.tileres/2, 0));
-			this.glasses.add(new GlassSquarePrism(this.tileres*7/2, this.resolution+this.tileres/2, 45));
-			this.glasses.add(new GlassTrianglePrism(this.tileres*9/2, this.resolution+this.tileres/2, 225));
-			this.glasses.add(new GlassTrianglePrism(this.tileres*11/2,this.resolution+this.tileres/2, 315));
+			this.glasses.add(new GlassSquareMirror(0, this.tileres/2, this.resolution+this.tileres/2, 0));
+			this.glasses.add(new GlassSquareMirror(1, this.tileres*3/2, this.resolution+this.tileres/2, 45));
+			this.glasses.add(new GlassSquareHalfMirror(2, this.tileres*5/2, this.resolution+this.tileres/2, 0));
+			this.glasses.add(new GlassSquarePrism(3, this.tileres*7/2, this.resolution+this.tileres/2, 45));
+			this.glasses.add(new GlassTrianglePrism(4, this.tileres*9/2, this.resolution+this.tileres/2, 225));
+			this.glasses.add(new GlassTrianglePrism(5, this.tileres*11/2,this.resolution+this.tileres/2, 315));
 		}
 		
 		this.update();
@@ -283,16 +284,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 					return true;
 				}
 			}
+			
 			this.selectedGlass = -1;
+			
 			if(new Rect(0, this.height-64, 64, this.height).contains((int)event.getX(), (int)event.getY()))
 			{
 				this.selectionMode = !this.selectionMode;
 				this.render();
 				return true;
 			}
-			for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
-				if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-x)*(this.glasses.get(i).x-x) + (this.glasses.get(i).y-y)*(this.glasses.get(i).y-y) <= this.selectionRange*this.selectionRange)
-					this.selectedGlass = i;
+			
+			if(this.preciseSelection)
+			{
+				for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
+					if(this.glasses.get(i).isMoveable() && this.glasses.get(i).isVertexInBounds(x, y))
+						this.selectedGlass = i;
+			}
+			else
+			{
+				for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
+					if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-x)*(this.glasses.get(i).x-x) + (this.glasses.get(i).y-y)*(this.glasses.get(i).y-y) <= this.selectionRange*this.selectionRange)
+						this.selectedGlass = i;
+			}
+			if(this.selectedGlass != -1)
+			{
+				this.grabX = (int)(x-this.glasses.get(this.selectedGlass).x);
+				this.grabY = (int)(y-this.glasses.get(this.selectedGlass).y);
+				this.grabDeg = -Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
+			}
 			this.render();
 			return true;
 		}
@@ -305,11 +324,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			if(this.selectedGlass != -1)
 			{
 				if(!this.selectionMode)
-					this.glasses.get(this.selectedGlass).move((int)x, (int)y);
+				{
+					this.glasses.get(this.selectedGlass).move((int)x-this.grabX, (int)y-this.grabY);
+				}
 				else
 				{
-					int d = -Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))));
-					this.glasses.get(this.selectedGlass).rotate(d+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0));
+					int d = -Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
+					this.glasses.get(this.selectedGlass).rotate(d-this.grabDeg);
 				}
 				this.update();
 				this.render();

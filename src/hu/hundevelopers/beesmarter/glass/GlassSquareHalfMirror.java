@@ -9,12 +9,12 @@ public class GlassSquareHalfMirror extends Glass
 {
 	public GlassSquareHalfMirror()
 	{
-		this(0, 0, 0);
+		this(0, 0, 0, 0);
 	}
 	
-	public GlassSquareHalfMirror(int x, int y, int deg)
+	public GlassSquareHalfMirror(int id, int x, int y, int deg)
 	{
-		super(x, y, deg);
+		super(id, x, y, deg);
 		this.alpha = 64;
 	}
 

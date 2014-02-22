@@ -9,12 +9,12 @@ public class GlassTrianglePrism extends Glass
 {
 	public GlassTrianglePrism()
 	{
-		this(0, 0, 0);
+		this(0, 0, 0, 0);
 	}
 	
-	public GlassTrianglePrism(int x, int y, int deg)
+	public GlassTrianglePrism(int id, int x, int y, int deg)
 	{
-		super(x, y, deg);
+		super(id, x, y, deg);
 		this.alpha = 128;
 		this.r = 100;
 		this.g = 200;

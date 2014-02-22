@@ -9,12 +9,12 @@ public class GlassSquareSolid extends Glass
 {
 	public GlassSquareSolid()
 	{
-		this(0, 0, 0);
+		this(0, 0, 0, 0);
 	}
 	
-	public GlassSquareSolid(int x, int y, int deg)
+	public GlassSquareSolid(int id, int x, int y, int deg)
 	{
-		super(x, y, deg);
+		super(id, x, y, deg);
 		this.r = 64;
 		this.g = 64;
 		this.b = 64;
