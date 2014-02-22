@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +23,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.GestureDetector;
 import android.view.SurfaceView;
 
-public class Game extends SurfaceView implements SurfaceHolder.Callback, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
+public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
 	public static Game instance;
 	
 	
 	
-	public GestureDetectorCompat gestureDetector;
 	public int width, height, tileres, tilenumber = 6, resolution = 600;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
@@ -53,8 +49,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	{
 		super(context);
 		this.getHolder().addCallback(this);
-		this.gestureDetector = new GestureDetectorCompat(context, this);
-		this.gestureDetector.setOnDoubleTapListener(this);
 		
 		this.bitmapArrows = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrows);
 		this.bitmapArrows2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrows2);
@@ -83,7 +77,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.resize(this.getWidth(), this.getHeight());
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.data"));
+			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
 			
 			this.startLasers.clear();
 			int n = Integer.parseInt(br.readLine());
@@ -113,14 +107,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			
 			br.close();
 		}
-		catch(IOException e)
+		catch(Exception e)
 		{
 			
 		}
 		
 		if(this.startLasers.size() == 0)
 		{
-			//Log.i("game", "adding glasses...");
 			this.startLasers.clear();
 			this.startLasers.add(new Line(this.resolution/2, this.resolution/2, this.resolution, this.resolution));
 			this.glasses.clear();
@@ -177,8 +170,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		
 		for(int i = 0; i < this.startLasers.size(); i++)
 			this.claser.add(this.startLasers.get(i));
-		for(int i = 0; i < this.glasses.size(); i++)
-			this.glasses.get(i).collide = false;
 		while(this.claser.size() > 0)
 		{
 			int n = this.claser.size();
@@ -205,7 +196,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 					if(!this.laser.contains(nl))
 					{
 						this.laser.add(nl);
-						this.glasses.get(min).collide = true;
 						this.glasses.get(min).handleLaserCollision(this.claser.get(0));
 					}
 					this.claser.remove(0);
@@ -235,11 +225,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			canvas.drawLine(this.laser.get(i).x1*this.size/this.resolution, this.laser.get(i).y1*this.size/this.resolution, this.laser.get(i).x2*this.size/this.resolution, this.laser.get(i).y2*this.size/this.resolution, paint);
 		paint.setARGB(255, 0, 255, 0);
 		for(int i = 0; i < this.glasses.size(); i++)
-		{
-			if(this.glasses.get(i).collide)
-				canvas.drawText("C", this.glasses.get(i).x*this.size/this.resolution-10, this.glasses.get(i).y*this.size/this.resolution+10, paint);
 			this.glasses.get(i).render(canvas);
-		}
 		
 		if(this.selectedGlass != -1)
 		{
@@ -284,8 +270,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		float x = event.getX()*this.resolution/this.size;
 		float y = event.getY()*this.resolution/this.size;
 		
-		if(this.gestureDetector.onTouchEvent(event))
-			return true;
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{
 			if(this.selectedGlass != -1)
@@ -294,6 +278,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				{
 					this.glasses.remove(this.selectedGlass);
 					this.selectedGlass = -1;
+					this.update();
+					this.render();
 					return true;
 				}
 			}
@@ -330,66 +316,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				return true;
 			}
 		}
-		return false;
-	}
-
-	@Override
-	public boolean onDoubleTap(MotionEvent e)
-	{
-		/*if(this.selectedGlass != -1 && (this.glasses.get(this.selectedGlass).x-e.getX())*(this.glasses.get(this.selectedGlass).x-e.getX()) + (this.glasses.get(this.selectedGlass).y-e.getY())*(this.glasses.get(this.selectedGlass).y-e.getY()) <= this.selectionRange*this.selectionRange)
-		{
-			this.selectionMode = !this.selectionMode;
-			this.render();
-			return true;
-		}*/
-		return false;
-	}
-
-	@Override
-	public boolean onDoubleTapEvent(MotionEvent e)
-	{
-		return false;
-	}
-
-	@Override
-	public boolean onSingleTapConfirmed(MotionEvent e)
-	{
-		return false;
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e)
-	{
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
-	{
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e)
-	{
-		
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY)
-	{
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e)
-	{
-		
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e)
-	{
 		return false;
 	}
 }

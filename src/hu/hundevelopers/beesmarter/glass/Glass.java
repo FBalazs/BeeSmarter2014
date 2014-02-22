@@ -12,7 +12,6 @@ public abstract class Glass
 {
 	public int x, y, deg, alpha, r, g, b;
 	public Vertex[] vertices;
-	public boolean collide;
 	
 	public Glass()
 	{
@@ -81,6 +80,29 @@ public abstract class Glass
 	{
 		this.deg = amount;
 		this.calculateVertices();
+		this.checkOutside();
+	}
+	
+	public void checkOutside()
+	{
+		float minx, maxx, miny, maxy;
+		minx = maxx = miny = maxy = 0F;
+		for(int i = 0; i < this.vertices.length; i++)
+		{
+			if(this.vertices[i].x < minx)
+				minx = this.vertices[i].x;
+			if(this.vertices[i].x-Game.instance.resolution > maxx)
+				maxx = this.vertices[i].x-Game.instance.resolution;
+			if(this.vertices[i].y < miny)
+				miny = this.vertices[i].y;
+			if(this.vertices[i].y-Game.instance.resolution > maxy)
+				maxy = this.vertices[i].y-Game.instance.resolution;
+		}
+		this.x -= minx;
+		this.x -= maxx;
+		this.y -= miny;
+		this.y -= maxy;
+		this.calculateVertices();
 	}
 	
 	public void move(int x, int y)
@@ -88,6 +110,7 @@ public abstract class Glass
 		this.x = x;
 		this.y = y;
 		this.calculateVertices();
+		this.checkOutside();
 	}
 	
 	public void render(Canvas canvas)
