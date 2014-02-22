@@ -163,8 +163,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		this.size = Math.min(width, height);
 		this.tileres = this.resolution/this.tilenumber;
 		this.selectionRange = Math.round(this.tileres*(float)Math.sqrt(2));
-		this.btnChange = new Rect(0, this.height-64, 64, this.height);
-		this.btnDelete = new Rect(this.width-64, this.height-64, this.width, this.height);
+		if(this.width < this.height)
+		{
+			this.btnChange = new Rect(0, this.height-64, 64, this.height);
+			this.btnDelete = new Rect(this.width-64, this.height-64, this.width, this.height);
+		}
+		else
+		{
+			this.btnChange = new Rect(this.width-64, 0, this.width, 64);
+			this.btnDelete = new Rect(this.width-64, this.height-64, this.width, this.height);
+		}
 	}
 	
 	public void update()
