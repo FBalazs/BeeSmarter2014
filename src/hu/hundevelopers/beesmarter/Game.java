@@ -42,7 +42,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public int size = 600;
 	
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
-	public boolean selectionMode, rotation45 = true, preciseSelection = true;
+	public boolean selectionMode, rotation45 = true, preciseSelection = false;
 	public Bitmap bitmapArrows, bitmapArrows2, bitmapChange, bitmapDelete;
 	
 	public Game(Context context, AttributeSet attributeSet)
@@ -50,8 +50,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		super(context);
 		this.getHolder().addCallback(this);
 		
-		this.bitmapArrows = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrows);
-		this.bitmapArrows2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrows2);
+		this.bitmapArrows = BitmapFactory.decodeResource(this.getResources(), R.drawable.move);
+		this.bitmapArrows2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate);
 		this.bitmapChange = BitmapFactory.decodeResource(this.getResources(), R.drawable.change);
 		this.bitmapDelete = BitmapFactory.decodeResource(this.getResources(), R.drawable.delete);
 		
@@ -310,7 +310,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			{
 				this.grabX = (int)(x-this.glasses.get(this.selectedGlass).x);
 				this.grabY = (int)(y-this.glasses.get(this.selectedGlass).y);
-				this.grabDeg = -Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
+				this.grabDeg = -this.glasses.get(this.selectedGlass).deg-Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
 			}
 			this.render();
 			return true;
