@@ -35,7 +35,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	
 	
-	public int width, height, tileres, tilenumber = 6, resolution = 600, palettePos = 0, paletteGrab;
+	public int width, height, tileres, tilenumber = 6, resolution = 600, tilesize, palettePos = 0, paletteGrab;
 	public List<Glass> glasses, palette;
 	public List<Line> laser, claser;
 	public List<Line> startLasers;
@@ -43,18 +43,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
 	public boolean selectionMode, rotation45 = true, preciseSelection = false;
-	public Bitmap bitmapArrows, bitmapArrows2, bitmapChange, bitmapDelete;
-	public Rect btnChange, btnDelete, paletteRect;
+	public Bitmap bitmapMove, bitmapRotate, bitmapIconDelete, bitmapIconMove, bitmapIconRotate, bitmapIconRotate45;
+	public Rect btnChange1, btnChange2, btnChange3, btnDelete, paletteRect;
 	
 	public Game(Context context, AttributeSet attributeSet)
 	{
 		super(context);
 		this.getHolder().addCallback(this);
 		
-		this.bitmapArrows = BitmapFactory.decodeResource(this.getResources(), R.drawable.move);
-		this.bitmapArrows2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate);
-		this.bitmapChange = BitmapFactory.decodeResource(this.getResources(), R.drawable.change);
-		this.bitmapDelete = BitmapFactory.decodeResource(this.getResources(), R.drawable.delete);
+		this.bitmapMove = BitmapFactory.decodeResource(this.getResources(), R.drawable.move);
+		this.bitmapRotate = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate);
+		this.bitmapIconDelete = BitmapFactory.decodeResource(this.getResources(), R.drawable.delete);
+		this.bitmapIconMove = BitmapFactory.decodeResource(this.getResources(), R.drawable.move_icon);
+		this.bitmapIconRotate = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate_icon);
+		this.bitmapIconRotate45 = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate2_icon);
 		
 		instance = this;
 		this.glasses = new ArrayList<Glass>();
@@ -162,17 +164,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		this.width = width;
 		this.height = height;
 		this.size = Math.min(width, height);
+		this.tilesize = this.size/this.tilenumber;
 		this.tileres = this.resolution/this.tilenumber;
 		this.selectionRange = Math.round(this.tileres*(float)Math.sqrt(2));
 		if(this.width < this.height)
 		{
-			this.btnChange = new Rect(0, this.height-64, 64, this.height);
-			this.btnDelete = new Rect(this.width-64, this.height-64, this.width, this.height);
+			this.btnChange1 = new Rect(0, this.height-this.tilesize, this.tilesize, this.height);
+			this.btnChange2 = new Rect(this.tilesize, this.height-this.tilesize, 2*this.tilesize, this.height);
+			this.btnChange3 = new Rect(2*this.tilesize, this.height-this.tilesize, 3*this.tilesize, this.height);
+			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
 		}
 		else
 		{
-			this.btnChange = new Rect(this.width-64, 0, this.width, 64);
-			this.btnDelete = new Rect(this.width-64, this.height-64, this.width, this.height);
+			this.btnChange1 = new Rect(this.width-this.tilesize, 0, this.width, this.tilesize);
+			this.btnChange2 = new Rect(this.width-this.tilesize, this.tilesize, this.width, 2*this.tilesize);
+			this.btnChange3 = new Rect(this.width-this.tilesize, 2*this.tilesize, this.width, 3*this.tilesize);
+			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
 		}
 	}
 	
@@ -254,14 +261,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 								this.glasses.get(this.selectedGlass).x*this.size/this.resolution+this.selectionRange*this.size/this.resolution,
 								this.glasses.get(this.selectedGlass).y*this.size/this.resolution+this.selectionRange*this.size/this.resolution);
 			if(this.selectionMode)
-				canvas.drawBitmap(bitmapArrows2, new Rect(0, 0, bitmapArrows2.getWidth(), bitmapArrows2.getHeight()), dst, paint);
+				canvas.drawBitmap(bitmapRotate, new Rect(0, 0, bitmapRotate.getWidth(), bitmapRotate.getHeight()), dst, paint);
 			else
-				canvas.drawBitmap(bitmapArrows, new Rect(0, 0, bitmapArrows.getWidth(), bitmapArrows.getHeight()), dst, paint);
+				canvas.drawBitmap(bitmapMove, new Rect(0, 0, bitmapMove.getWidth(), bitmapMove.getHeight()), dst, paint);
 		}
 		
 		paint.setARGB(128, 255, 255, 255);
-		canvas.drawBitmap(bitmapChange, new Rect(0, 0, bitmapChange.getWidth(), bitmapChange.getHeight()), this.btnChange, paint);
-		canvas.drawBitmap(bitmapDelete, new Rect(0, 0, bitmapDelete.getWidth(), bitmapDelete.getHeight()), this.btnDelete, paint);
+		canvas.drawBitmap(bitmapIconMove, new Rect(0, 0, bitmapIconMove.getWidth(), bitmapIconMove.getHeight()), this.btnChange1, paint);
+		canvas.drawBitmap(bitmapIconRotate, new Rect(0, 0, bitmapIconRotate.getWidth(), bitmapIconRotate.getHeight()), this.btnChange2, paint);
+		canvas.drawBitmap(bitmapIconRotate45, new Rect(0, 0, bitmapIconRotate45.getWidth(), bitmapIconRotate45.getHeight()), this.btnChange3, paint);
+		canvas.drawBitmap(bitmapIconDelete, new Rect(0, 0, bitmapIconDelete.getWidth(), bitmapIconDelete.getHeight()), this.btnDelete, paint);
 		
 		paint.setARGB(128, 255, 255, 255);
 		paint.setTextSize(5);
@@ -307,9 +316,23 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			
 			this.selectedGlass = -1;
 			
-			if(this.btnChange.contains((int)event.getX(), (int)event.getY()))
+			if(this.btnChange1.contains((int)event.getX(), (int)event.getY()))
 			{
-				this.selectionMode = !this.selectionMode;
+				this.selectionMode = false;
+				this.render();
+				return true;
+			}
+			if(this.btnChange2.contains((int)event.getX(), (int)event.getY()))
+			{
+				this.selectionMode = true;
+				this.rotation45 = false;
+				this.render();
+				return true;
+			}
+			if(this.btnChange3.contains((int)event.getX(), (int)event.getY()))
+			{
+				this.selectionMode = true;
+				this.rotation45 = true;
 				this.render();
 				return true;
 			}
