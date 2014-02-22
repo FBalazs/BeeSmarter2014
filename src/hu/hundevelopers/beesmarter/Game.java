@@ -350,7 +350,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			else if(this.paletteSelection != -1)
 			{
 				Glass g = null;
-				int id = this.glasses.get(this.glasses.size()-1).id+1;
+				int id = (this.glasses.size() == 0 ? 0 : this.glasses.get(this.glasses.size()-1).id+1);
 				switch(this.paletteSelection)
 				{
 					case 0:
