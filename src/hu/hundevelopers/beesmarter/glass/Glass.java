@@ -3,6 +3,7 @@ package hu.hundevelopers.beesmarter.glass;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import hu.hundevelopers.beesmarter.Game;
 import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.MathHelper;
 import hu.hundevelopers.beesmarter.math.Vertex;
@@ -98,11 +99,11 @@ public abstract class Glass
 		
 		Path path = new Path();
 		path.setFillType(Path.FillType.EVEN_ODD);
-		path.moveTo(this.vertices[this.vertices.length-1].x, this.vertices[this.vertices.length-1].y);
+		path.moveTo(this.vertices[this.vertices.length-1].x*Game.instance.size/Game.instance.resolution, this.vertices[this.vertices.length-1].y*Game.instance.size/Game.instance.resolution);
 		for(int i = 0; i < this.vertices.length; i++)
 		{
-			path.lineTo(this.vertices[i].x, this.vertices[i].y);
-			canvas.drawLine(this.vertices[i].x, this.vertices[i].y, this.vertices[(i+1)%this.vertices.length].x, this.vertices[(i+1)%this.vertices.length].y, paint);
+			path.lineTo(this.vertices[i].x*Game.instance.size/Game.instance.resolution, this.vertices[i].y*Game.instance.size/Game.instance.resolution);
+			canvas.drawLine(this.vertices[i].x*Game.instance.size/Game.instance.resolution, this.vertices[i].y*Game.instance.size/Game.instance.resolution, this.vertices[(i+1)%this.vertices.length].x*Game.instance.size/Game.instance.resolution, this.vertices[(i+1)%this.vertices.length].y*Game.instance.size/Game.instance.resolution, paint);
 		}
 		path.close();
 		

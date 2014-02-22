@@ -25,7 +25,7 @@ public class GlassSquareMirror extends Glass
 		int d = 45;
 		for(int i = 0; i < 4; i++)
 		{
-			this.vertices[i] = new Vertex(this.x+MathHelper.cos(d+this.deg)*Game.instance.tilesize/(float)Math.sqrt(2), this.y+MathHelper.sin(d+this.deg)*Game.instance.tilesize/(float)Math.sqrt(2));
+			this.vertices[i] = new Vertex(this.x+MathHelper.cos(d+this.deg)*Game.instance.tileres/(float)Math.sqrt(2), this.y+MathHelper.sin(d+this.deg)*Game.instance.tileres/(float)Math.sqrt(2));
 			d += 90;
 		}
 	}
@@ -45,12 +45,12 @@ public class GlassSquareMirror extends Glass
 		float dx = (t.x-v.x);
 		float dy = (t.y-v.y);
 		if(dx == 0)
-			dy = Math.abs(dy)/dy*Game.instance.size;
+			dy = Math.abs(dy)/dy*Game.instance.resolution;
 		else if(dy == 0)
-			dx = Math.abs(dx)/dx*Game.instance.size;
+			dx = Math.abs(dx)/dx*Game.instance.resolution;
 		else
 		{
-			float s = Math.max(Game.instance.size/Math.abs(dx), Game.instance.size/Math.abs(dy));
+			float s = Math.max(Game.instance.resolution/Math.abs(dx), Game.instance.resolution/Math.abs(dy));
 			dx *= s;
 			dy *= s;
 		}

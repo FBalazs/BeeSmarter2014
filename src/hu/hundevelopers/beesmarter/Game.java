@@ -39,10 +39,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	
 	
 	public GestureDetectorCompat gestureDetector;
-	public int width, height, tilesize, tilenumber = 6, size;
+	public int width, height, tileres, tilenumber = 6, resolution = 600;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
 	public List<Line> startLasers;
+	public int size = 600;
 	
 	public int selectedGlass, selectionRange;
 	public boolean selectionMode;
@@ -77,9 +78,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	public void surfaceCreated(SurfaceHolder holder)
 	{
 		Log.i("surface", "creating...");
+		this.resize(this.getWidth(), this.getHeight());
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.dat2"));
+			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
 			
 			this.startLasers.clear();
 			int n = Integer.parseInt(br.readLine());
@@ -114,20 +116,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			
 		}
 		
-		this.resize(this.getWidth(), this.getHeight());
-		
 		if(this.startLasers.size() == 0)
 		{
 			//Log.i("game", "adding glasses...");
 			this.startLasers.clear();
-			this.startLasers.add(new Line(this.size/2, this.size/2, this.size, this.size));
+			this.startLasers.add(new Line(this.resolution/2, this.resolution/2, this.resolution, this.resolution));
 			this.glasses.clear();
-			this.glasses.add(new GlassSquareMirror(this.tilesize/2, this.size+this.tilesize/2, 0));
-			this.glasses.add(new GlassSquareMirror(this.tilesize*3/2, this.size+this.tilesize/2, 45));
-			this.glasses.add(new GlassSquareHalfMirror(this.tilesize*5/2, this.size+this.tilesize/2, 0));
-			this.glasses.add(new GlassSquarePrism(this.tilesize*7/2, this.size+this.tilesize/2, 45));
-			this.glasses.add(new GlassTrianglePrism(this.tilesize*9/2, this.size+this.tilesize/2, 225));
-			this.glasses.add(new GlassTrianglePrism(this.tilesize*11/2,this.size+this.tilesize/2, 315));
+			this.glasses.add(new GlassSquareMirror(this.tileres/2, this.resolution+this.tileres/2, 0));
+			this.glasses.add(new GlassSquareMirror(this.tileres*3/2, this.resolution+this.tileres/2, 45));
+			this.glasses.add(new GlassSquareHalfMirror(this.tileres*5/2, this.resolution+this.tileres/2, 0));
+			this.glasses.add(new GlassSquarePrism(this.tileres*7/2, this.resolution+this.tileres/2, 45));
+			this.glasses.add(new GlassTrianglePrism(this.tileres*9/2, this.resolution+this.tileres/2, 225));
+			this.glasses.add(new GlassTrianglePrism(this.tileres*11/2,this.resolution+this.tileres/2, 315));
 		}
 		
 		this.update();
@@ -141,7 +141,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		MainActivity.instance.getFilesDir().mkdirs();
 		try
 		{
-			PrintWriter pw = new PrintWriter(new File(MainActivity.instance.getFilesDir().getPath()+"/save.dat2"));
+			PrintWriter pw = new PrintWriter(new File(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
 			
 			pw.println(this.startLasers.size());
 			for(int i = 0; i < this.startLasers.size(); i++)
@@ -164,8 +164,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.width = width;
 		this.height = height;
 		this.size = Math.min(width, height);
-		this.tilesize = this.size/this.tilenumber;
-		this.selectionRange = Math.round(this.tilesize*(float)Math.sqrt(2));
+		this.tileres = this.resolution/this.tilenumber;
+		this.selectionRange = Math.round(this.tileres*(float)Math.sqrt(2));
 	}
 	
 	public void update()
@@ -230,22 +230,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		paint.setARGB(255, 255, 0, 0);
 		paint.setStrokeWidth(1F);
 		for(int i = 0; i < this.laser.size(); i++)
-			canvas.drawLine(this.laser.get(i).x1, this.laser.get(i).y1, this.laser.get(i).x2, this.laser.get(i).y2, paint);
+			canvas.drawLine(this.laser.get(i).x1*this.size/this.resolution, this.laser.get(i).y1*this.size/this.resolution, this.laser.get(i).x2*this.size/this.resolution, this.laser.get(i).y2*this.size/this.resolution, paint);
 		paint.setARGB(255, 0, 255, 0);
 		for(int i = 0; i < this.glasses.size(); i++)
 		{
 			if(this.glasses.get(i).collide)
-				canvas.drawText("C", this.glasses.get(i).x-10, this.glasses.get(i).y+10, paint);
+				canvas.drawText("C", this.glasses.get(i).x*this.size/this.resolution-10, this.glasses.get(i).y*this.size/this.resolution+10, paint);
 			this.glasses.get(i).render(canvas);
 		}
 		
 		if(this.selectedGlass != -1)
 		{
 			paint.setARGB(128, 255, 255, 255);
-			Rect dst = new Rect(this.glasses.get(this.selectedGlass).x-this.selectionRange,
-								this.glasses.get(this.selectedGlass).y-this.selectionRange,
-								this.glasses.get(this.selectedGlass).x+this.selectionRange,
-								this.glasses.get(this.selectedGlass).y+this.selectionRange);
+			Rect dst = new Rect(this.glasses.get(this.selectedGlass).x*this.size/this.resolution-this.selectionRange*this.size/this.resolution,
+								this.glasses.get(this.selectedGlass).y*this.size/this.resolution-this.selectionRange*this.size/this.resolution,
+								this.glasses.get(this.selectedGlass).x*this.size/this.resolution+this.selectionRange*this.size/this.resolution,
+								this.glasses.get(this.selectedGlass).y*this.size/this.resolution+this.selectionRange*this.size/this.resolution);
 			if(this.selectionMode)
 				canvas.drawBitmap(bitmapArrows2, new Rect(0, 0, bitmapArrows2.getWidth(), bitmapArrows2.getHeight()), dst, paint);
 			else
@@ -253,7 +253,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		}
 		
 		paint.setARGB(255, 128, 128, 128);
-		Rect dst = new Rect(0, this.size, this.tilesize, this.size+this.tilesize);
+		Rect dst = new Rect(0, this.resolution, this.tileres, this.resolution+this.tileres);
 		canvas.drawRect(dst, paint);
 		paint.setARGB(128, 255, 255, 255);
 		if(this.selectionMode)
@@ -282,19 +282,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		float x = event.getX()*this.resolution/this.size;
+		float y = event.getY()*this.resolution/this.size;
+		
 		if(this.gestureDetector.onTouchEvent(event))
 			return true;
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{
 			this.selectedGlass = -1;
-			if(new Rect(0, this.size, this.tilesize, this.size+this.tilesize).contains((int)event.getX(), (int)event.getY()))
+			if(new Rect(0, this.resolution, this.tileres, this.resolution+this.tileres).contains((int)event.getX(), (int)event.getY()))
 			{
 				this.selectionMode = !this.selectionMode;
 				this.render();
 				return true;
 			}
 			for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
-				if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-event.getX())*(this.glasses.get(i).x-event.getX()) + (this.glasses.get(i).y-event.getY())*(this.glasses.get(i).y-event.getY()) <= this.selectionRange*this.selectionRange)
+				if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-x)*(this.glasses.get(i).x-x) + (this.glasses.get(i).y-y)*(this.glasses.get(i).y-y) <= this.selectionRange*this.selectionRange)
 					this.selectedGlass = i;
 			this.render();
 			return true;
@@ -308,11 +311,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			if(this.selectedGlass != -1)
 			{
 				if(!this.selectionMode)
-					this.glasses.get(this.selectedGlass).move((int)event.getX(), (int)event.getY());
+					this.glasses.get(this.selectedGlass).move((int)x, (int)y);
 				else
 				{
-					int d = -Math.round((float)Math.toDegrees(Math.atan((event.getY()-this.glasses.get(this.selectedGlass).y)/(event.getX()-this.glasses.get(this.selectedGlass).x))));
-					this.glasses.get(this.selectedGlass).rotate(d+(event.getX()-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0));
+					int d = -Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))));
+					this.glasses.get(this.selectedGlass).rotate(d+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0));
 				}
 				this.update();
 				this.render();

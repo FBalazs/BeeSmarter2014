@@ -24,9 +24,9 @@ public class GlassTrianglePrism extends Glass
 	public void calculateVertices()
 	{
 		this.vertices = new Vertex[3];
-		this.vertices[0] = new Vertex(this.x+Game.instance.tilesize*MathHelper.cos(this.deg+45)/(float)Math.sqrt(2), this.y+Game.instance.tilesize*MathHelper.sin(this.deg+45)/(float)Math.sqrt(2));
-		this.vertices[1] = new Vertex(this.x+Game.instance.tilesize*MathHelper.cos(this.deg+135)/(float)Math.sqrt(2), this.y+Game.instance.tilesize*MathHelper.sin(this.deg+135)/(float)Math.sqrt(2));
-		this.vertices[2] = new Vertex(this.x+Game.instance.tilesize*MathHelper.cos(this.deg+225)/(float)Math.sqrt(2), this.y+Game.instance.tilesize*MathHelper.sin(this.deg+225)/(float)Math.sqrt(2));
+		this.vertices[0] = new Vertex(this.x+Game.instance.tileres*MathHelper.cos(this.deg+45)/(float)Math.sqrt(2), this.y+Game.instance.tileres*MathHelper.sin(this.deg+45)/(float)Math.sqrt(2));
+		this.vertices[1] = new Vertex(this.x+Game.instance.tileres*MathHelper.cos(this.deg+135)/(float)Math.sqrt(2), this.y+Game.instance.tileres*MathHelper.sin(this.deg+135)/(float)Math.sqrt(2));
+		this.vertices[2] = new Vertex(this.x+Game.instance.tileres*MathHelper.cos(this.deg+225)/(float)Math.sqrt(2), this.y+Game.instance.tileres*MathHelper.sin(this.deg+225)/(float)Math.sqrt(2));
 	}
 	
 	@Override
@@ -54,12 +54,12 @@ public class GlassTrianglePrism extends Glass
 		float dx = sl.y1-sl.y2;
 		float dy = sl.x2-sl.x1;
 		if(dx == 0)
-			dy = Math.abs(dy)/dy*Game.instance.size;
+			dy = Math.abs(dy)/dy*Game.instance.resolution;
 		else if(dy == 0)
-			dx = Math.abs(dx)/dx*Game.instance.size;
+			dx = Math.abs(dx)/dx*Game.instance.resolution;
 		else
 		{
-			float s = Math.max(Game.instance.size/Math.abs(dx), Game.instance.size/Math.abs(dy));
+			float s = Math.max(Game.instance.resolution/Math.abs(dx), Game.instance.resolution/Math.abs(dy));
 			dx *= s;
 			dy *= s;
 		}
