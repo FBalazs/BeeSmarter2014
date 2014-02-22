@@ -57,18 +57,22 @@ public abstract class Glass
 	public void handleLaserCollision(Line laser)
 	{
 		int min = 0;
+		float dmin = MathHelper.getLineAndVertexSquaredDistance(new Line(this.vertices[0], this.vertices[1]), new Vertex(laser.x1, laser.y1));
 		Vertex vmin = MathHelper.getLineIntersection(laser, new Line(this.vertices[0], this.vertices[1]));
 		if(vmin != null && (!MathHelper.isIntersectionPointOnSegment(new Line(this.vertices[0], this.vertices[1]), vmin) || !MathHelper.isIntersectionPointOnSegment(laser, vmin)))	
 			vmin = null;
 		for(int i = 1; i < this.vertices.length; i++)
 		{
-			Vertex v = MathHelper.getLineIntersection(laser, new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]));
-			if(v != null && (!MathHelper.isIntersectionPointOnSegment(laser, v) || !MathHelper.isIntersectionPointOnSegment(new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]), v)))
+			Line s = new Line(this.vertices[i], this.vertices[(i+1)%this.vertices.length]);
+			float d = MathHelper.getLineAndVertexSquaredDistance(s, new Vertex(laser.x1, laser.y1));
+			Vertex v = MathHelper.getLineIntersection(laser, s);
+			if(v != null && (!MathHelper.isIntersectionPointOnSegment(laser, v) || !MathHelper.isIntersectionPointOnSegment(s, v)))
 				v = null;
-			if(v != null && (vmin == null || (vmin.x-laser.x1)*(vmin.x-laser.x1) + (vmin.y-laser.y1)*(vmin.y-laser.y1) > (v.x-laser.x1)*(v.x-laser.x1) + (v.y-laser.y1)*(v.y-laser.y1)))
+			if(v != null && (vmin == null || /*(vmin.x-laser.x1)*(vmin.x-laser.x1) + (vmin.y-laser.y1)*(vmin.y-laser.y1) > (v.x-laser.x1)*(v.x-laser.x1) + (v.y-laser.y1)*(v.y-laser.y1)*/ d < dmin))
 			{
 				vmin = v;
 				min = i;
+				dmin = d;
 			}
 		}
 		if(vmin != null)

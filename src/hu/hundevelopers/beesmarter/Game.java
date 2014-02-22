@@ -42,7 +42,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public int size;
 	
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
-	public boolean selectionMode, rotation45 = true, preciseSelection = false;
+	public boolean selectionMode, rotation45 = true, preciseSelection = true;
 	public Bitmap bitmapMove, bitmapRotate, bitmapIconDelete, bitmapIconMove, bitmapIconRotate, bitmapIconRotate45;
 	public Rect btnChange1, btnChange2, btnChange3, btnDelete, paletteRect;
 	
@@ -290,6 +290,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			int top = this.paletteRect.top*Game.instance.resolution/Game.instance.size;
 			int height = this.paletteRect.height()*Game.instance.resolution/Game.instance.size;
 			int center = this.paletteRect.centerX()*Game.instance.resolution/Game.instance.size;
+			if(this.paletteSelection != -1)
+			{
+				paint.setARGB(128, 255, 255, 255);
+				canvas.drawRect(new Rect(this.paletteRect.left, this.paletteRect.top+this.paletteRect.height()*this.paletteSelection/4, this.paletteRect.right, this.paletteRect.top+this.paletteRect.height()*(this.paletteSelection+1)/4), paint);
+			}
 			new GlassSquareMirror(-1, center, top+height*1/8, 0).render(canvas);
 			new GlassSquareHalfMirror(-1, center, top+height*3/8, 0).render(canvas);
 			new GlassSquarePrism(-1, center, top+height*5/8, 0).render(canvas);
@@ -368,6 +373,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 						this.paletteSelection = -1;
 						this.selectedGlass = g.id;
 						Game.instance.glasses.add(g);
+						this.update();
+						this.render();
 						return true;
 					}
 				}

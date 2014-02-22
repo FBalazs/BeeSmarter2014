@@ -42,4 +42,14 @@ public class MathHelper
 				&& Math.round(v.y) >= Math.round(Math.min(l.y1, l.y2))-1
 				&& Math.round(v.y) <= Math.round(Math.max(l.y1, l.y2))+1);
 	}
+	
+	public static float getLineAndVertexSquaredDistance(Line l, Vertex v)
+	{
+		Line m = new Line(v.x, v.y, v.x+(l.y1-l.y2), v.y+(l.x2-l.x1));
+		Vertex c = getLineIntersection(l, m);
+		if(isIntersectionPointOnSegment(l, c))
+			return (v.x-c.x)*(v.x-c.x) + (v.y-c.y)*(v.y-c.y);
+		else
+			return Math.min((v.x-l.x1)*(v.x-l.x1) + (v.y-l.y1)*(v.y-l.y1), (v.x-l.x2)*(v.x-l.x2) + (v.y-l.y2)*(v.y-l.y2));
+	}
 }
