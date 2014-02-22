@@ -220,6 +220,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			if(new Rect(0, this.size, this.tilesize, this.size+this.tilesize).contains((int)event.getX(), (int)event.getY()))
 			{
 				this.selectionMode = !this.selectionMode;
+				this.render();
 				return true;
 			}
 			for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
