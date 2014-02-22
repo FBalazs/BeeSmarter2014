@@ -7,6 +7,11 @@ import hu.hundevelopers.beesmarter.math.Vertex;
 
 public class GlassSquareMirror extends Glass
 {
+	public GlassSquareMirror()
+	{
+		this(0, 0, 0);
+	}
+	
 	public GlassSquareMirror(int x, int y, int deg)
 	{
 		super(x, y, deg);

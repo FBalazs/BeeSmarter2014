@@ -13,6 +13,11 @@ public abstract class Glass
 	public Vertex[] vertices;
 	public boolean collide;
 	
+	public Glass()
+	{
+		this(0, 0, 0);
+	}
+	
 	public Glass(int x, int y, int deg)
 	{
 		this.alpha = 255;
