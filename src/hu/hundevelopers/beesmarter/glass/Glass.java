@@ -10,7 +10,7 @@ import hu.hundevelopers.beesmarter.math.Vertex;
 
 public abstract class Glass
 {
-	public int x, y, deg, alpha, r, g, b;
+	public int id, x, y, deg, alpha, r, g, b;
 	public Vertex[] vertices;
 	
 	public Glass()
@@ -20,6 +20,7 @@ public abstract class Glass
 	
 	public Glass(int x, int y, int deg)
 	{
+		this.id = Game.instance.glasses.size();
 		this.alpha = 255;
 		this.r = 255;
 		this.g = 255;
@@ -76,11 +77,33 @@ public abstract class Glass
 	
 	public abstract void handleLaserCollision(int side, Line laser, Vertex V);
 	
-	public void rotate(int amount)
+	public void rotate(int deg)
 	{
-		this.deg = amount;
+		int pdeg = this.deg;
+		this.deg = deg;
 		this.calculateVertices();
 		this.checkOutside();
+		if(this.isColliding())
+		{
+			this.deg = pdeg;
+			this.calculateVertices();
+		}
+	}
+	
+	public void move(int x, int y)
+	{
+		int px = this.x;
+		int py = this.y;
+		this.x = x;
+		this.y = y;
+		this.calculateVertices();
+		this.checkOutside();
+		if(this.isColliding())
+		{
+			this.x = px;
+			this.y = py;
+			this.calculateVertices();
+		}
 	}
 	
 	public void checkOutside()
@@ -105,12 +128,24 @@ public abstract class Glass
 		this.calculateVertices();
 	}
 	
-	public void move(int x, int y)
+	public boolean isColliding()
 	{
-		this.x = x;
-		this.y = y;
-		this.calculateVertices();
-		this.checkOutside();
+		for(int i = 0; i < Game.instance.glasses.size(); i++)
+			if(this.id != Game.instance.glasses.get(i).id)
+			{
+				for(int j = 0; j < this.vertices.length; j++)
+				{
+					Line s1 = new Line(this.vertices[j], this.vertices[(j+1)%this.vertices.length]);
+					for(int k = 0; k < Game.instance.glasses.get(i).vertices.length; k++)
+					{
+						Line s2 = new Line(Game.instance.glasses.get(i).vertices[k], Game.instance.glasses.get(i).vertices[(k+1)%Game.instance.glasses.get(i).vertices.length]);
+						Vertex v = MathHelper.getLineIntersection(s1, s2);
+						if(v != null && MathHelper.isIntersectionPointOnSegment(s1, v) && MathHelper.isIntersectionPointOnSegment(s2, v))
+							return true;
+					}
+				}
+			}
+		return false;
 	}
 	
 	public void render(Canvas canvas)
