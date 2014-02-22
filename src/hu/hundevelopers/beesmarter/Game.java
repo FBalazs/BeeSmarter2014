@@ -47,7 +47,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	
 	public int selectedGlass, selectionRange;
 	public boolean selectionMode;
-	public Bitmap bitmapArrows, bitmapArrows2;
+	public Bitmap bitmapArrows, bitmapArrows2, bitmapChange, bitmapDelete;
 	
 	public Game(Context context, AttributeSet attributeSet)
 	{
@@ -58,6 +58,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		
 		this.bitmapArrows = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrows);
 		this.bitmapArrows2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrows2);
+		this.bitmapChange = BitmapFactory.decodeResource(this.getResources(), R.drawable.change);
+		this.bitmapDelete = BitmapFactory.decodeResource(this.getResources(), R.drawable.delete);
 		
 		instance = this;
 		this.glasses = new ArrayList<Glass>();
@@ -81,7 +83,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.resize(this.getWidth(), this.getHeight());
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
+			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.data"));
 			
 			this.startLasers.clear();
 			int n = Integer.parseInt(br.readLine());
@@ -252,14 +254,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				canvas.drawBitmap(bitmapArrows, new Rect(0, 0, bitmapArrows.getWidth(), bitmapArrows.getHeight()), dst, paint);
 		}
 		
-		paint.setARGB(255, 128, 128, 128);
-		Rect dst = new Rect(0, this.resolution, this.tileres, this.resolution+this.tileres);
-		canvas.drawRect(dst, paint);
 		paint.setARGB(128, 255, 255, 255);
-		if(this.selectionMode)
-			canvas.drawBitmap(bitmapArrows, new Rect(0, 0, bitmapArrows.getWidth(), bitmapArrows.getHeight()), dst, paint);
-		else
-			canvas.drawBitmap(bitmapArrows2, new Rect(0, 0, bitmapArrows2.getWidth(), bitmapArrows2.getHeight()), dst, paint);
+		Rect dst = new Rect(0, this.height-64, 64, this.height);
+		canvas.drawBitmap(bitmapChange, new Rect(0, 0, bitmapChange.getWidth(), bitmapChange.getHeight()), dst, paint);
+		dst = new Rect(this.width-64, this.height-64, this.width, this.height);
+		canvas.drawBitmap(bitmapDelete, new Rect(0, 0, bitmapDelete.getWidth(), bitmapDelete.getHeight()), dst, paint);
 		
 		this.getHolder().unlockCanvasAndPost(canvas);
 	}
@@ -289,8 +288,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			return true;
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{
+			if(this.selectedGlass != -1)
+			{
+				if(new Rect(this.width-64, this.height-64, this.width, this.height).contains((int)event.getX(), (int)event.getY()))
+				{
+					this.glasses.remove(this.selectedGlass);
+					this.selectedGlass = -1;
+					return true;
+				}
+			}
 			this.selectedGlass = -1;
-			if(new Rect(0, this.resolution, this.tileres, this.resolution+this.tileres).contains((int)event.getX(), (int)event.getY()))
+			if(new Rect(0, this.height-64, 64, this.height).contains((int)event.getX(), (int)event.getY()))
 			{
 				this.selectionMode = !this.selectionMode;
 				this.render();
