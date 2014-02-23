@@ -70,9 +70,9 @@ public class GlassCircleTarget extends Glass
 	{
 		Paint paint = new Paint();
 		if(this.hit)
-			paint.setARGB(128, 255, 64, 64);
+			paint.setARGB(255, 255, 64, 64);
 		else
-			paint.setARGB(128, 255, 255, 255);
+			paint.setARGB(255, 100, 100, 100);
 		paint.setStrokeWidth(5F);
 		paint.setAntiAlias(true);
 		
