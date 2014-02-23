@@ -48,8 +48,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
 	public boolean selectionMode, rotation45 = true, preciseSelection = true;
-	public Bitmap bitmapMove, bitmapRotate, bitmapIconDelete, bitmapIconMove, bitmapIconRotate, bitmapIconRotate45;
-	public Rect btnChange1, btnChange2, btnChange3, btnDelete, paletteRect;
+	public Bitmap bitmapMove, bitmapRotate, bitmapIconDelete, bitmapIconInfo, bitmapIconMove, bitmapIconRotate, bitmapIconRotate45;
+	public Rect btnChange1, btnChange2, btnChange3, btnDelete, paletteRect, btnInfo;
 	
 	public Game(Context context, AttributeSet attributeSet)
 	{
@@ -61,6 +61,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.bitmapMove = BitmapFactory.decodeResource(this.getResources(), R.drawable.move);
 		this.bitmapRotate = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate);
 		this.bitmapIconDelete = BitmapFactory.decodeResource(this.getResources(), R.drawable.delete);
+		this.bitmapIconInfo = BitmapFactory.decodeResource(this.getResources(), R.drawable.info_icon);
 		this.bitmapIconMove = BitmapFactory.decodeResource(this.getResources(), R.drawable.move_icon);
 		this.bitmapIconRotate = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate_icon);
 		this.bitmapIconRotate45 = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate2_icon);
@@ -162,6 +163,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			this.btnChange1 = new Rect(0, this.height-this.tilesize, this.tilesize, this.height);
 			this.btnChange2 = new Rect(this.tilesize, this.height-this.tilesize, 2*this.tilesize, this.height);
 			this.btnChange3 = new Rect(2*this.tilesize, this.height-this.tilesize, 3*this.tilesize, this.height);
+			this.btnInfo = new Rect(this.width-this.tilesize, this.height-2*this.tilesize, this.width, this.height-this.tilesize);
 			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
 			this.paletteRect = new Rect(2, this.size+2, this.width-2, this.size+this.tilesize*3/2+4);
 		}
@@ -170,6 +172,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			this.btnChange1 = new Rect(this.width-this.tilesize, 0, this.width, this.tilesize);
 			this.btnChange2 = new Rect(this.width-this.tilesize, this.tilesize, this.width, 2*this.tilesize);
 			this.btnChange3 = new Rect(this.width-this.tilesize, 2*this.tilesize, this.width, 3*this.tilesize);
+			this.btnInfo = new Rect(this.width-2*this.tilesize, this.height-this.tilesize, this.width-this.tilesize, this.height);
 			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
 			this.paletteRect = new Rect(this.size+2, 2, this.size+this.tilesize*3/2+4, this.height-2);
 		}
@@ -296,6 +299,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		canvas.drawBitmap(bitmapIconRotate, new Rect(0, 0, bitmapIconRotate.getWidth(), bitmapIconRotate.getHeight()), this.btnChange2, paint);
 		canvas.drawBitmap(bitmapIconRotate45, new Rect(0, 0, bitmapIconRotate45.getWidth(), bitmapIconRotate45.getHeight()), this.btnChange3, paint);
 		canvas.drawBitmap(bitmapIconDelete, new Rect(0, 0, bitmapIconDelete.getWidth(), bitmapIconDelete.getHeight()), this.btnDelete, paint);
+		canvas.drawBitmap(bitmapIconInfo, new Rect(0, 0, bitmapIconInfo.getWidth(), bitmapIconInfo.getHeight()), this.btnInfo, paint);
 		
 		paint.setARGB(128, 255, 255, 255);
 		paint.setTextSize(5);
