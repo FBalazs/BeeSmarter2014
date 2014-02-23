@@ -111,7 +111,8 @@ public abstract class Glass
 		int g = this.getCollidingGlassIndex();
 		if(g != -1)
 		{
-			// TODO asd
+			// TODO aabb
+			
 			this.x = px;
 			this.y = py;
 			this.calculateVertices();
