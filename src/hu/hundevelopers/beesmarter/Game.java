@@ -23,18 +23,21 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class Game extends SurfaceView implements SurfaceHolder.Callback
+public class Game extends SurfaceView implements SurfaceHolder.Callback, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
 {
 	public static Game instance;
 	
 	
 	
+	public GestureDetectorCompat gestureDetector;
 	public int width, height, tileres, tilenumber = 6, resolution = 6000, tilesize, paletteSelection;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
@@ -50,6 +53,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		super(context);
 		this.getHolder().addCallback(this);
+		this.gestureDetector = new GestureDetectorCompat(context, this);
+		this.gestureDetector.setOnDoubleTapListener(this);
 		
 		this.bitmapMove = BitmapFactory.decodeResource(this.getResources(), R.drawable.move);
 		this.bitmapRotate = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate);
@@ -332,6 +337,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		if(this.gestureDetector.onTouchEvent(event))
+			return true;
+		
 		float x = event.getX()*this.resolution/this.size;
 		float y = event.getY()*this.resolution/this.size;
 		
@@ -347,7 +355,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				this.render();
 				return true;
 			}
-			else if(this.paletteSelection != -1)
+			else if((int)event.getX() < this.size && (int)event.getY() < size && this.paletteSelection != -1)
 			{
 				Glass g = null;
 				int id = (this.glasses.size() == 0 ? 0 : this.glasses.get(this.glasses.size()-1).id+1);
@@ -465,4 +473,42 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		}
 		return false;
 	}
+
+	@Override
+	public boolean onDoubleTap(MotionEvent event){return false;}
+
+	@Override
+	public boolean onDoubleTapEvent(MotionEvent event){return false;}
+
+	@Override
+	public boolean onSingleTapConfirmed(MotionEvent event){return false;}
+
+	@Override
+	public boolean onDown(MotionEvent event){return false;}
+
+	@Override
+	public boolean onFling(MotionEvent event1, MotionEvent event2, float f1, float f2){return false;}
+
+	@Override
+	public void onLongPress(MotionEvent event)
+	{
+		if(this.btnDelete.contains((int)event.getX(), (int)event.getY()))
+		{
+			for(int i = 0; i < this.glasses.size(); i++)
+				if(this.glasses.get(i).isMoveable())
+					this.glasses.remove(i--);
+			this.selectedGlass = -1;
+			this.update();
+			this.render();
+		}
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent event1, MotionEvent event2, float f1, float f2){return false;}
+
+	@Override
+	public void onShowPress(MotionEvent event){}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent event){return false;}
 }
