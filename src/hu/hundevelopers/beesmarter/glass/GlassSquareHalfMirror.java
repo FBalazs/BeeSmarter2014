@@ -5,7 +5,7 @@ import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.MathHelper;
 import hu.hundevelopers.beesmarter.math.Vertex;
 
-public class GlassSquareHalfMirror extends Glass
+public class GlassSquareHalfMirror extends GlassSquare
 {
 	public GlassSquareHalfMirror()
 	{
@@ -16,18 +16,6 @@ public class GlassSquareHalfMirror extends Glass
 	{
 		super(id, x, y, deg);
 		this.alpha = 64;
-	}
-
-	@Override
-	public void calculateVertices()
-	{
-		this.vertices = new Vertex[4];
-		int d = 45;
-		for(int i = 0; i < 4; i++)
-		{
-			this.vertices[i] = new Vertex(this.x+MathHelper.cos(d+this.deg)*Game.instance.tileres/(float)Math.sqrt(2), this.y+MathHelper.sin(d+this.deg)*Game.instance.tileres/(float)Math.sqrt(2));
-			d += 90;
-		}
 	}
 	
 	@Override

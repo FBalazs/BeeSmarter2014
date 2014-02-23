@@ -1,9 +1,12 @@
 package hu.hundevelopers.beesmarter;
 
 import hu.hundevelopers.beesmarter.glass.Glass;
+import hu.hundevelopers.beesmarter.glass.GlassSquareEmitter;
 import hu.hundevelopers.beesmarter.glass.GlassSquareHalfMirror;
 import hu.hundevelopers.beesmarter.glass.GlassSquareMirror;
 import hu.hundevelopers.beesmarter.glass.GlassSquarePrism;
+import hu.hundevelopers.beesmarter.glass.GlassCircleTarget;
+import hu.hundevelopers.beesmarter.glass.GlassSquareSolid;
 import hu.hundevelopers.beesmarter.glass.GlassTrianglePrism;
 import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.Vertex;
@@ -41,7 +44,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	public int width, height, tileres, tilenumber = 6, resolution = 6000, tilesize, paletteSelection;
 	public List<Glass> glasses;
 	public List<Line> laser, claser;
-	public List<Line> startLasers;
 	public int size;
 	
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
@@ -67,7 +69,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.glasses = new ArrayList<Glass>();
 		this.laser = new ArrayList<Line>();
 		this.claser = new ArrayList<Line>();
-		this.startLasers = new ArrayList<Line>();
 		this.selectedGlass = -1;
 		this.paletteSelection = -1;
 		this.selectionMode = false;
@@ -88,16 +89,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		{
 			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
 			
-			this.startLasers.clear();
-			int n = Integer.parseInt(br.readLine());
-			for(int i = 0; i < n; i++)
-			{
-				String[] split = br.readLine().split(" ");
-				this.startLasers.add(new Line(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
-			}
-			
 			this.glasses.clear();
-			n = Integer.parseInt(br.readLine());
+			int n = Integer.parseInt(br.readLine());
 			for(int i = 0; i < n; i++)
 			{
 				String[] split = br.readLine().split(" ");
@@ -122,17 +115,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			
 		}
 		
-		if(this.startLasers.size() == 0)
+		if(this.glasses.size() == 0)
 		{
-			this.startLasers.clear();
-			this.startLasers.add(new Line(this.resolution/2, this.resolution/2, this.resolution, this.resolution));
 			this.glasses.clear();
-			/*this.glasses.add(new GlassSquareMirror(0, this.tileres/2, this.resolution+this.tileres/2, 0));
-			this.glasses.add(new GlassSquareMirror(1, this.tileres*3/2, this.resolution+this.tileres/2, 45));
-			this.glasses.add(new GlassSquareHalfMirror(2, this.tileres*5/2, this.resolution+this.tileres/2, 0));
-			this.glasses.add(new GlassSquarePrism(3, this.tileres*7/2, this.resolution+this.tileres/2, 45));
-			this.glasses.add(new GlassTrianglePrism(4, this.tileres*9/2, this.resolution+this.tileres/2, 225));
-			this.glasses.add(new GlassTrianglePrism(5, this.tileres*11/2,this.resolution+this.tileres/2, 315));*/
+			this.glasses.add(new GlassCircleTarget(0, this.resolution-this.tileres/2, this.resolution-this.tileres/2, 0));
+			this.glasses.add(new GlassCircleTarget(1, this.tileres/2, this.resolution-this.tileres/2, 0));
+			this.glasses.add(new GlassSquareEmitter(2, this.tileres/2, this.tileres/2, 180));
+			this.glasses.add(new GlassSquareSolid(3, this.resolution/2, this.resolution/2, 45));
 		}
 		
 		this.update();
@@ -147,10 +136,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		try
 		{
 			PrintWriter pw = new PrintWriter(new File(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
-			
-			pw.println(this.startLasers.size());
-			for(int i = 0; i < this.startLasers.size(); i++)
-				pw.println(this.startLasers.get(i).x1+" "+this.startLasers.get(i).y1+" "+this.startLasers.get(i).x2+" "+this.startLasers.get(i).y2);
 			
 			pw.println(this.glasses.size());
 			for(int i = 0; i < this.glasses.size(); i++)
@@ -195,8 +180,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.laser.clear();
 		this.claser.clear();
 		
-		for(int i = 0; i < this.startLasers.size(); i++)
-			this.claser.add(this.startLasers.get(i));
+		for(int i = 0; i < this.glasses.size(); i++)
+			this.glasses.get(i).onUpdate();
 		while(this.claser.size() > 0)
 		{
 			int n = this.claser.size();
@@ -377,7 +362,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				if(g != null)
 				{
 					g.checkOutside();
-					if(!g.isColliding())
+					if(g.getCollidingGlassIndex() == -1)
 					{
 						this.paletteSelection = -1;
 						this.selectedGlass = this.glasses.size();

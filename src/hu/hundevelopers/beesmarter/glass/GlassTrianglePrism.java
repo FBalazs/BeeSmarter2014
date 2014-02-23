@@ -23,10 +23,23 @@ public class GlassTrianglePrism extends Glass
 	@Override
 	public void calculateVertices()
 	{
+		this.bbMinX = this.bbMaxX = this.x;
+		this.bbMinY = this.bbMaxY = this.y;
 		this.vertices = new Vertex[3];
-		this.vertices[0] = new Vertex(this.x+Game.instance.tileres*MathHelper.cos(this.deg+45)/(float)Math.sqrt(2), this.y+Game.instance.tileres*MathHelper.sin(this.deg+45)/(float)Math.sqrt(2));
-		this.vertices[1] = new Vertex(this.x+Game.instance.tileres*MathHelper.cos(this.deg+135)/(float)Math.sqrt(2), this.y+Game.instance.tileres*MathHelper.sin(this.deg+135)/(float)Math.sqrt(2));
-		this.vertices[2] = new Vertex(this.x+Game.instance.tileres*MathHelper.cos(this.deg+225)/(float)Math.sqrt(2), this.y+Game.instance.tileres*MathHelper.sin(this.deg+225)/(float)Math.sqrt(2));
+		for(int i = 0; i < 3; i++)
+		{
+			float x = this.x+Game.instance.tileres*MathHelper.cos(this.deg+45+i*90)/(float)Math.sqrt(2);
+			float y = this.y+Game.instance.tileres*MathHelper.sin(this.deg+45+i*90)/(float)Math.sqrt(2);
+			if(x < this.bbMinX)
+				this.bbMinX = x;
+			if(x > this.bbMaxX)
+				this.bbMaxX = x;
+			if(y < this.bbMinY)
+				this.bbMinY = y;
+			if(y > this.bbMaxY)
+				this.bbMaxY = y;
+			this.vertices[i] = new Vertex(x, y);
+		}
 	}
 	
 	@Override

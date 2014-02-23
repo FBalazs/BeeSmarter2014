@@ -12,6 +12,7 @@ public abstract class Glass
 {
 	public int id, x, y, deg, alpha, r, g, b;
 	public Vertex[] vertices;
+	public float bbMinX, bbMaxX, bbMinY, bbMaxY;
 	
 	public Glass()
 	{
@@ -37,6 +38,11 @@ public abstract class Glass
 	}
 	
 	public abstract void calculateVertices();
+	
+	public void onUpdate()
+	{
+		
+	}
 	
 	public Vertex getLaserInterSectionPoint(Line laser)
 	{
@@ -87,7 +93,7 @@ public abstract class Glass
 		this.deg = deg;
 		this.calculateVertices();
 		this.checkOutside();
-		if(this.isColliding())
+		if(this.getCollidingGlassIndex() != -1)
 		{
 			this.deg = pdeg;
 			this.calculateVertices();
@@ -102,8 +108,10 @@ public abstract class Glass
 		this.y = y;
 		this.calculateVertices();
 		this.checkOutside();
-		if(this.isColliding())
+		int g = this.getCollidingGlassIndex();
+		if(g != -1)
 		{
+			
 			this.x = px;
 			this.y = py;
 			this.calculateVertices();
@@ -132,7 +140,7 @@ public abstract class Glass
 		this.calculateVertices();
 	}
 	
-	public boolean isColliding()
+	public int getCollidingGlassIndex()
 	{
 		for(int i = 0; i < Game.instance.glasses.size(); i++)
 			if(this.id != Game.instance.glasses.get(i).id)
@@ -145,11 +153,11 @@ public abstract class Glass
 						Line s2 = new Line(Game.instance.glasses.get(i).vertices[k], Game.instance.glasses.get(i).vertices[(k+1)%Game.instance.glasses.get(i).vertices.length]);
 						Vertex v = MathHelper.getLineIntersection(s1, s2);
 						if(v != null && MathHelper.isIntersectionPointOnSegment(s1, v) && MathHelper.isIntersectionPointOnSegment(s2, v))
-							return true;
+							return i;
 					}
 				}
 			}
-		return false;
+		return -1;
 	}
 	
 	public boolean isVertexInBounds(float x, float y)
@@ -176,7 +184,7 @@ public abstract class Glass
 	public void render(Canvas canvas)
 	{
 		Paint paint = new Paint();
-		paint.setARGB(255, 100, 150, 255);
+		paint.setARGB(128, 100, 150, 255);
 		paint.setStrokeWidth(2F);
 		paint.setAntiAlias(true);
 		
