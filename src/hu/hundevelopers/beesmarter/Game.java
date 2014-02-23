@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -334,7 +335,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{
-			if(this.paletteRect.contains((int)event.getX(), (int)event.getY()))
+			if(this.paletteRect.contains((int)event.getX(), (int)event.getY())) // elem kiválasztása
 			{
 				this.selectedGlass = -1;
 				if(this.width < this.height)
@@ -344,7 +345,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				this.render();
 				return true;
 			}
-			else if((int)event.getX() < this.size && (int)event.getY() < size && this.paletteSelection != -1)
+			else if((int)event.getX() < this.size && (int)event.getY() < size && this.paletteSelection != -1) // megpróbálja elhelyezni a kiválasztott elemet
 			{
 				Glass g = null;
 				int id = (this.glasses.size() == 0 ? 0 : this.glasses.get(this.glasses.size()-1).id+1);
@@ -381,7 +382,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			
 			if(this.selectedGlass != -1)
 			{
-				if(this.btnDelete.contains((int)event.getX(), (int)event.getY()))
+				if(this.btnDelete.contains((int)event.getX(), (int)event.getY())) // törlõ gomb megnyomva
 				{
 					this.glasses.remove(this.selectedGlass);
 					this.selectedGlass = -1;
@@ -389,6 +390,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 					this.render();
 					return true;
 				}
+			}
+			
+			if(this.btnInfo.contains((int)event.getX(), (int)event.getY())) // infó gomb megnyomva
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
+				builder.setTitle("About the game");
+				builder.setMessage("This simple game was made for the 2nd BeeSmarter competition in just 5 days by the HunDevelopers team.\n"
+									+"\nlicense");
+				builder.setIcon(R.drawable.logo);
+				builder.setNeutralButton("Return", null);
+				builder.create().show();
+				return true;
 			}
 			
 			this.selectedGlass = -1;
@@ -439,7 +452,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		{
 			//this.selectedGlass = -1;
 		}
-		else if(event.getAction() == MotionEvent.ACTION_MOVE)
+		else if(event.getAction() == MotionEvent.ACTION_MOVE) // mozgatás
 		{
 			if(this.selectedGlass != -1)
 			{
