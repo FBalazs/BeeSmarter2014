@@ -302,9 +302,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		canvas.drawBitmap(bitmapIconDelete, new Rect(0, 0, bitmapIconDelete.getWidth(), bitmapIconDelete.getHeight()), this.btnDelete, paint);
 		canvas.drawBitmap(bitmapIconInfo, new Rect(0, 0, bitmapIconInfo.getWidth(), bitmapIconInfo.getHeight()), this.btnInfo, paint);
 		
-		paint.setARGB(128, 255, 255, 255);
-		paint.setTextSize(5);
-		canvas.drawText("The icons license can be found at: http://creativecommons.org/licenses/by-nc/3.0/nl/deed.en_GB", 10, 10, paint);
+		//paint.setARGB(128, 255, 255, 255);
+		//paint.setTextSize(5);
+		//canvas.drawText("The icons license can be found at: http://creativecommons.org/licenses/by-nc/3.0/nl/deed.en_GB", 10, 10, paint);
 		
 		this.getHolder().unlockCanvasAndPost(canvas);
 	}
