@@ -28,6 +28,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
+import android.text.SpannableString;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -394,10 +396,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			
 			if(this.btnInfo.contains((int)event.getX(), (int)event.getY())) // infó gomb megnyomva
 			{
+				 // Linkify the message
+			    final SpannableString s = new SpannableString(
+			    		"This app was made for the BeeSmarter2014 competition by the HunDevelopers team.\n"
+						+"\nThe icons are from https://www.iconfinder.com/search/?q=iconset:iconic-1 and are under the licence of http://creativecommons.org/licenses/by-nc/3.0/nl/deed.en_GB" +
+						"\nThe icons have been modified!");
+			    Linkify.addLinks(s, Linkify.ALL);
+
 				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
 				builder.setTitle("About the game");
-				builder.setMessage("This simple game was made for the 2nd BeeSmarter competition in just 5 days by the HunDevelopers team.\n"
-									+"\nlicense");
+				builder.setMessage(s);
 				builder.setIcon(R.drawable.logo);
 				builder.setNeutralButton("Return", null);
 				builder.create().show();
