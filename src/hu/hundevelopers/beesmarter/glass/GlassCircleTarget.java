@@ -39,8 +39,8 @@ public class GlassCircleTarget extends Glass
 		this.vertices = new Vertex[36];
 		for(int i = 0; i < 36; i++)
 		{
-			float x = this.x+MathHelper.cos(i*10)*Game.instance.tileres/4;
-			float y = this.y+MathHelper.sin(i*10)*Game.instance.tileres/4;
+			float x = this.x+MathHelper.cos(i*10)*Game.instance.tileres/2;
+			float y = this.y+MathHelper.sin(i*10)*Game.instance.tileres/2;
 			if(x < this.bbMinX)
 				this.bbMinX = x;
 			if(x > this.bbMaxX)
@@ -76,16 +76,16 @@ public class GlassCircleTarget extends Glass
 		paint.setStrokeWidth(5F);
 		paint.setAntiAlias(true);
 		
-		canvas.drawCircle(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, Game.instance.tilesize/4, paint);
+		canvas.drawCircle(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, Game.instance.tilesize/2, paint);
 		if(this.hit)
 		{
 			paint.setARGB(255, 200, 200, 200);
-			canvas.drawCircle(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, Game.instance.tilesize/4-4, paint);
+			canvas.drawCircle(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, Game.instance.tilesize/2-4, paint);
 		}
 		else
 		{
 			paint.setARGB(255, 150, 150, 150);
-			canvas.drawCircle(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, Game.instance.tilesize/4-2, paint);
+			canvas.drawCircle(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, Game.instance.tilesize/2-2, paint);
 		}
 	}
 }

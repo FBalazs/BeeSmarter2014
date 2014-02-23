@@ -17,9 +17,9 @@ public class GlassSquareSolid extends GlassSquare
 	public GlassSquareSolid(int id, int x, int y, int deg)
 	{
 		super(id, x, y, deg);
-		this.r = 64;
-		this.g = 64;
-		this.b = 64;
+		this.r = 96;
+		this.g = 96;
+		this.b = 96;
 	}
 	
 	@Override
@@ -38,8 +38,8 @@ public class GlassSquareSolid extends GlassSquare
 	public void render(Canvas canvas)
 	{
 		Paint paint = new Paint();
-		paint.setARGB(128, 100, 150, 255);
-		paint.setStrokeWidth(2F);
+		paint.setARGB(255, 48, 48, 48);
+		paint.setStrokeWidth(4F);
 		paint.setAntiAlias(true);
 		
 		Path path = new Path();
@@ -48,7 +48,7 @@ public class GlassSquareSolid extends GlassSquare
 		for(int i = 0; i < this.vertices.length; i++)
 		{
 			path.lineTo(this.vertices[i].x*Game.instance.size/Game.instance.resolution, this.vertices[i].y*Game.instance.size/Game.instance.resolution);
-			//canvas.drawLine(this.vertices[i].x*Game.instance.size/Game.instance.resolution, this.vertices[i].y*Game.instance.size/Game.instance.resolution, this.vertices[(i+1)%this.vertices.length].x*Game.instance.size/Game.instance.resolution, this.vertices[(i+1)%this.vertices.length].y*Game.instance.size/Game.instance.resolution, paint);
+			canvas.drawLine(this.vertices[i].x*Game.instance.size/Game.instance.resolution, this.vertices[i].y*Game.instance.size/Game.instance.resolution, this.vertices[(i+1)%this.vertices.length].x*Game.instance.size/Game.instance.resolution, this.vertices[(i+1)%this.vertices.length].y*Game.instance.size/Game.instance.resolution, paint);
 		}
 		path.close();
 		
