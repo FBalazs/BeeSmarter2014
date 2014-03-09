@@ -213,6 +213,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.height = height;
 		this.size = Math.min(width, height);
 		this.tilesize = this.size/this.tilenumber;
+		this.size = Math.min(this.size, Math.max(width, height)-this.tilesize*5/2);
+		this.tilesize = this.size/this.tilenumber;
 		this.tileres = this.resolution/this.tilenumber;
 		this.selectionRange = Math.round(this.tileres*(float)Math.sqrt(2));
 		if(this.width < this.height)
@@ -390,6 +392,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			canvas.drawRect(new Rect(0, this.size, this.width, this.height), paint);
 		else
 			canvas.drawRect(new Rect(this.size, 0, this.width, this.height), paint);
+		if(this.size < this.width)
+			canvas.drawRect(new Rect(this.size, 0, this.width, this.size), paint);
 		
 		if(this.selectedGlass != -1)
 		{
@@ -476,7 +480,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		else
 			paint.setARGB(255, 0, 0, 255);
 		paint.setStrokeWidth(10F);
-		canvas.drawLine(0, width+(height-width)*2/3, width, width+(height-width)*2/3, paint);
+		canvas.drawLine(0, height-tilesize*5/4, width, height-tilesize*5/4, paint);
 		// TODO
 		this.getHolder().unlockCanvasAndPost(canvas);
 	}

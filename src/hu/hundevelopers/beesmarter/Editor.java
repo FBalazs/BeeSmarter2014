@@ -154,36 +154,6 @@ public class Editor extends Game
 		this.saveData();
 	}
 	
-	public void resize(int width, int height)
-	{
-		this.width = width;
-		this.height = height;
-		this.size = Math.min(width, height);
-		this.tilesize = this.size/this.tilenumber;
-		this.tileres = this.resolution/this.tilenumber;
-		this.selectionRange = Math.round(this.tileres*(float)Math.sqrt(2));
-		if(this.width < this.height)
-		{
-			this.btnChange1 = new Rect(0, this.height-this.tilesize, this.tilesize, this.height);
-			this.btnChange2 = new Rect(this.tilesize, this.height-this.tilesize, 2*this.tilesize, this.height);
-			this.btnChange3 = new Rect(2*this.tilesize, this.height-this.tilesize, 3*this.tilesize, this.height);
-			this.btnNext = new Rect(this.width-3*this.tilesize, this.height-this.tilesize, this.width-2*this.tilesize, this.height);
-			this.btnInfo = new Rect(this.width-2*this.tilesize, this.height-this.tilesize, this.width-this.tilesize, this.height);
-			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
-			this.paletteRect = new Rect(2, this.size+2, this.width-2, this.size+this.tilesize*3/2+4);
-		}
-		else
-		{
-			this.btnChange1 = new Rect(this.width-this.tilesize, 0, this.width, this.tilesize);
-			this.btnChange2 = new Rect(this.width-this.tilesize, this.tilesize, this.width, 2*this.tilesize);
-			this.btnChange3 = new Rect(this.width-this.tilesize, 2*this.tilesize, this.width, 3*this.tilesize);
-			this.btnNext = new Rect(this.width-this.tilesize, this.height-3*this.tilesize, this.width, this.height-2*this.tilesize);
-			this.btnInfo = new Rect(this.width-this.tilesize, this.height-2*this.tilesize, this.width, this.height-this.tilesize);
-			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
-			this.paletteRect = new Rect(this.size+2, 2, this.size+this.tilesize*3/2+4, this.height-2);
-		}
-	}
-	
 	public void update()
 	{
 		
@@ -211,6 +181,8 @@ public class Editor extends Game
 			canvas.drawRect(new Rect(0, this.size, this.width, this.height), paint);
 		else
 			canvas.drawRect(new Rect(this.size, 0, this.width, this.height), paint);
+		if(this.size < this.width)
+			canvas.drawRect(new Rect(this.size, 0, this.width, this.size), paint);
 		
 		if(this.selectedGlass != -1)
 		{
