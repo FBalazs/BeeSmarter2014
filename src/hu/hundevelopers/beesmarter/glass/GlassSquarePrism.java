@@ -21,7 +21,7 @@ public class GlassSquarePrism extends GlassSquare
 	}
 	
 	@Override
-	public void handleLaserCollision(int side, Line laser, Vertex v)
+	public void handleLaserCollision(int side, Line laser, Vertex v, boolean color)
 	{
 		Vertex vm = new Vertex(this.vertices[(side+1)%this.vertices.length].y-this.vertices[side].y+v.x, this.vertices[side].x-this.vertices[(side+1)%this.vertices.length].x+v.y);
 		// tükör oldalának felezõmerõlegese
@@ -29,7 +29,10 @@ public class GlassSquarePrism extends GlassSquare
 		
 		// áteresztés
 		Vertex v2 = MathHelper.getLineIntersection(m, new Line(this.vertices[(side+2)%this.vertices.length], this.vertices[(side+3)%this.vertices.length]));
-		Game.instance.laser.add(new Line(v, v2));
+		if(color)
+			Game.instance.laser1.add(new Line(v, v2));
+		else
+			Game.instance.laser2.add(new Line(v, v2));
 		float dx = v2.x-v.x;
 		float dy = v2.y-v.y;
 		if(dx == 0)
@@ -42,6 +45,9 @@ public class GlassSquarePrism extends GlassSquare
 			dx *= s;
 			dy *= s;
 		}
-		Game.instance.claser.add(new Line(v2, new Vertex(v2.x+dx, v2.y+dy)));
+		if(color)
+			Game.instance.claser1.add(new Line(v2, new Vertex(v2.x+dx, v2.y+dy)));
+		else
+			Game.instance.claser2.add(new Line(v2, new Vertex(v2.x+dx, v2.y+dy)));
 	}
 }

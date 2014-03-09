@@ -60,7 +60,7 @@ public abstract class Glass
 		return min;
 	}
 	
-	public void handleLaserCollision(Line laser)
+	public void handleLaserCollision(Line laser, boolean color)
 	{
 		int min = 0;
 		float dmin = MathHelper.getLineAndVertexSquaredDistance(new Line(this.vertices[0], this.vertices[1]), new Vertex(laser.x1, laser.y1));
@@ -82,10 +82,10 @@ public abstract class Glass
 			}
 		}
 		if(vmin != null)
-			this.handleLaserCollision(min, laser, vmin);
+			this.handleLaserCollision(min, laser, vmin, color);
 	}
 	
-	public abstract void handleLaserCollision(int side, Line laser, Vertex V);
+	public abstract void handleLaserCollision(int side, Line laser, Vertex V, boolean color);
 	
 	public void rotate(int deg)
 	{

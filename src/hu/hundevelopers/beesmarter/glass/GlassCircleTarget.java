@@ -60,7 +60,7 @@ public class GlassCircleTarget extends Glass
 	}
 	
 	@Override
-	public void handleLaserCollision(int side, Line laser, Vertex V)
+	public void handleLaserCollision(int side, Line laser, Vertex V, boolean color)
 	{
 		this.hit = true;
 	}

@@ -8,14 +8,14 @@ import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.MathHelper;
 import hu.hundevelopers.beesmarter.math.Vertex;
 
-public class GlassSquareEmitter extends Glass
+public class GlassSquareEmitter2 extends Glass
 {
-	public GlassSquareEmitter()
+	public GlassSquareEmitter2()
 	{
 		this(0, 0, 0, 0);
 	}
 	
-	public GlassSquareEmitter(int id, int x, int y, int deg)
+	public GlassSquareEmitter2(int id, int x, int y, int deg)
 	{
 		super(id, x, y, deg);
 		this.r = 64;
@@ -32,8 +32,8 @@ public class GlassSquareEmitter extends Glass
 		int d = 45;
 		for(int i = 0; i < 4; i++)
 		{
-			float x = this.x+MathHelper.cos(d+this.deg)*Game.instance.tileres/2/(float)Math.sqrt(2);
-			float y = this.y+MathHelper.sin(d+this.deg)*Game.instance.tileres/2/(float)Math.sqrt(2);
+			float x = this.x+MathHelper.cos(d+this.deg)*Game.instance.tileres/1.5F/(float)Math.sqrt(2);
+			float y = this.y+MathHelper.sin(d+this.deg)*Game.instance.tileres/1.5F/(float)Math.sqrt(2);
 			if(x < this.bbMinX)
 				this.bbMinX = x;
 			if(x > this.bbMaxX)
@@ -56,7 +56,7 @@ public class GlassSquareEmitter extends Glass
 	@Override
 	public void onUpdate()
 	{
-		Game.instance.claser.add(new Line(this.x, this.y, this.x+Game.instance.resolution*2*MathHelper.cos(this.deg), this.y+Game.instance.resolution*2*MathHelper.sin(this.deg)));
+		Game.instance.claser2.add(new Line(this.x, this.y, this.x+Game.instance.resolution*2*MathHelper.cos(this.deg), this.y+Game.instance.resolution*2*MathHelper.sin(this.deg)));
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class GlassSquareEmitter extends Glass
 	}
 
 	@Override
-	public void handleLaserCollision(int side, Line laser, Vertex V)
+	public void handleLaserCollision(int side, Line laser, Vertex V, boolean color)
 	{
 		
 	}
@@ -77,7 +77,7 @@ public class GlassSquareEmitter extends Glass
 	public void render(Canvas canvas)
 	{
 		Paint paint = new Paint();
-		paint.setARGB(255, 255, 0, 0);
+		paint.setARGB(255, 0, 0, 255);
 		paint.setStrokeWidth(2F);
 		paint.setAntiAlias(true);
 		
@@ -93,5 +93,7 @@ public class GlassSquareEmitter extends Glass
 		
 		paint.setARGB(this.alpha, this.r, this.g, this.b);
 		canvas.drawPath(path, paint);
+		paint.setARGB(255, 0, 0, 255);
+		canvas.drawLine(this.x*Game.instance.size/Game.instance.resolution, this.y*Game.instance.size/Game.instance.resolution, this.vertices[3].x/2*Game.instance.size/Game.instance.resolution+this.vertices[0].x/2*Game.instance.size/Game.instance.resolution, this.vertices[3].y/2*Game.instance.size/Game.instance.resolution+this.vertices[0].y/2*Game.instance.size/Game.instance.resolution, paint);
 	}
 }

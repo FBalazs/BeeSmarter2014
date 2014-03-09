@@ -19,7 +19,7 @@ public class GlassSquareMirror extends GlassSquare
 	}
 	
 	@Override
-	public void handleLaserCollision(int side, Line laser, Vertex v)
+	public void handleLaserCollision(int side, Line laser, Vertex v, boolean color)
 	{
 		Vertex vm = new Vertex(this.vertices[(side+1)%this.vertices.length].y-this.vertices[side].y+v.x, this.vertices[side].x-this.vertices[(side+1)%this.vertices.length].x+v.y);
 		// tükör oldalának felezõmerõlegese
@@ -42,6 +42,9 @@ public class GlassSquareMirror extends GlassSquare
 			dx *= s;
 			dy *= s;
 		}
-		Game.instance.claser.add(new Line(v, new Vertex(v.x+dx, v.y+dy)));
+		if(color)
+			Game.instance.claser1.add(new Line(v, new Vertex(v.x+dx, v.y+dy)));
+		else
+			Game.instance.claser2.add(new Line(v, new Vertex(v.x+dx, v.y+dy)));
 	}
 }

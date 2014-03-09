@@ -1,26 +1,19 @@
 package hu.hundevelopers.beesmarter;
 
-import hu.hundevelopers.beesmarter.glass.Glass;
-import hu.hundevelopers.beesmarter.glass.GlassSquareEmitter;
-import hu.hundevelopers.beesmarter.glass.GlassSquareHalfMirror;
-import hu.hundevelopers.beesmarter.glass.GlassSquareMirror;
-import hu.hundevelopers.beesmarter.glass.GlassSquarePrism;
-import hu.hundevelopers.beesmarter.glass.GlassCircleTarget;
-import hu.hundevelopers.beesmarter.glass.GlassSquareSolid;
-import hu.hundevelopers.beesmarter.glass.GlassTrianglePrism;
+import hu.hundevelopers.beesmarter.glass.*;
 import hu.hundevelopers.beesmarter.math.Line;
 import hu.hundevelopers.beesmarter.math.Vertex;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.PrintWriter;
+//import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -36,6 +29,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.EditText;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
 {
@@ -46,13 +40,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	public GestureDetectorCompat gestureDetector;
 	public int width, height, tileres, tilenumber = 6, resolution = 6000, tilesize, paletteSelection;
 	public List<Glass> glasses;
-	public List<Line> laser, claser;
+	public List<Line> laser1, claser1, laser2, claser2;
 	public int size;
 	
 	public int selectedGlass, selectionRange, grabX, grabY, grabDeg;
 	public boolean selectionMode, rotation45 = true, preciseSelection = true;
-	public Bitmap bitmapMove, bitmapRotate, bitmapIconDelete, bitmapIconInfo, bitmapIconMove, bitmapIconRotate, bitmapIconRotate45;
-	public Rect btnChange1, btnChange2, btnChange3, btnDelete, paletteRect, btnInfo;
+	public Bitmap bitmapMove, bitmapRotate, bitmapIconDelete, bitmapIconInfo, bitmapIconMove, bitmapIconRotate, bitmapIconRotate45, bitmapIconNext;
+	public Rect btnChange1, btnChange2, btnChange3, btnDelete, paletteRect, btnInfo, btnNext;
+	public String winString, saveFile;
 	
 	public Game(Context context, AttributeSet attributeSet)
 	{
@@ -68,14 +63,32 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.bitmapIconMove = BitmapFactory.decodeResource(this.getResources(), R.drawable.move_icon);
 		this.bitmapIconRotate = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate_icon);
 		this.bitmapIconRotate45 = BitmapFactory.decodeResource(this.getResources(), R.drawable.rotate2_icon);
+		this.bitmapIconNext = BitmapFactory.decodeResource(this.getResources(), R.drawable.turn_change_icon);
 		
 		instance = this;
 		this.glasses = new ArrayList<Glass>();
-		this.laser = new ArrayList<Line>();
-		this.claser = new ArrayList<Line>();
+		this.laser1 = new ArrayList<Line>();
+		this.laser2 = new ArrayList<Line>();
+		this.claser1 = new ArrayList<Line>();
+		this.claser2 = new ArrayList<Line>();
 		this.selectedGlass = -1;
 		this.paletteSelection = -1;
 		this.selectionMode = false;
+		
+		this.winString = null;
+	}
+	
+	public void generateMap()
+	{
+		this.glasses.clear();
+		Random rand = new Random(System.currentTimeMillis());
+		int x1 = tileres/2+rand.nextInt(resolution/3);
+		int y1 = tileres/2+rand.nextInt(resolution/3);
+		this.glasses.add(new GlassSquareEmitter1(0, x1, y1, 180));
+		this.glasses.add(new GlassSquareEmitter2(1, resolution-x1, resolution-y1, 0));
+		this.glasses.add(new GlassTarget(2, resolution/2, resolution/2, 0));
+		this.glasses.add(new GlassBomb(3, tileres/2, resolution/2, 0));
+		this.glasses.add(new GlassSquareSolid(4, resolution-tileres/2, resolution/2, 0));
 	}
 	
 	@Override
@@ -84,73 +97,114 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		this.resize(width, height);
 	}
 	
+	public static String glassPackage = "hu.hundevelopers.beesmarter.glass.";
+	
+	public String getSaveData()
+	{
+		StringBuilder str = new StringBuilder();
+		str.append(this.glasses.size()+"\n");
+		for(int i = 0; i < this.glasses.size(); i++)
+			str.append(this.glasses.get(i).x+" "+this.glasses.get(i).y+" "+this.glasses.get(i).deg+" "+this.glasses.get(i).getClass().getName().substring(glassPackage.length())+"\n");
+		return new String(str);
+	}
+	
+	public void loadSaveData(String str)
+	{
+		this.glasses.clear();
+		String[] split = str.split("\n");
+		int n = Integer.parseInt(split[0]);
+		for(int i = 0; i < n; i++)
+		{
+			String[] split2 = split[i+1].split(" ");
+			try
+			{
+				this.glasses.add((Glass)MainActivity.instance.getClassLoader().loadClass(glassPackage+split2[3]).newInstance());
+				this.glasses.get(i).id = i;
+				this.glasses.get(i).x = Integer.parseInt(split2[0]);
+				this.glasses.get(i).y = Integer.parseInt(split2[1]);
+				this.glasses.get(i).rotate(Integer.parseInt(split2[2]));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
 		Log.i("surface", "creating...");
 		this.resize(this.getWidth(), this.getHeight());
-		try
+		
+		if(NetworkHandler.instance.isClient)
 		{
-			BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
-			
-			this.glasses.clear();
-			int n = Integer.parseInt(br.readLine());
-			for(int i = 0; i < n; i++)
+			AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
+			builder.setTitle("Load");
+			builder.setMessage("Please type the map's name!");
+			final EditText input = new EditText(MainActivity.instance);
+			builder.setView(input);
+			builder.setNeutralButton("Ok", new DialogInterface.OnClickListener()
 			{
-				String[] split = br.readLine().split(" ");
-				try
+				@Override
+				public void onClick(DialogInterface dialog, int which)
 				{
-					this.glasses.add((Glass)MainActivity.instance.getClassLoader().loadClass(split[3]).newInstance());
-					this.glasses.get(i).id = i;
-					this.glasses.get(i).x = Integer.parseInt(split[0]);
-					this.glasses.get(i).y = Integer.parseInt(split[1]);
-					this.glasses.get(i).rotate(Integer.parseInt(split[2]));
+					saveFile = input.getText().toString();
+					try
+					{
+						BufferedReader br = new BufferedReader(new FileReader(MainActivity.instance.getFilesDir().getPath()+"/"+saveFile+".map"));
+						
+						StringBuilder str = new StringBuilder();
+						String cline = br.readLine();
+						while(cline != null)
+						{
+							str.append(cline+"\n");
+							cline = br.readLine();
+						}
+						br.close();
+						loadSaveData(new String(str));
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+					
+					if(glasses.size() == 0)
+					{
+						generateMap();
+					}
+					
+					if(NetworkHandler.instance.isClient)
+						NetworkHandler.instance.sendData();
+					
+					update();
+					render();
 				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-			
-			br.close();
+			});
+			builder.create().show();
 		}
-		catch(Exception e)
+		else
 		{
-			
+			update();
+			render();
 		}
-		
-		if(this.glasses.size() == 0)
-		{
-			this.glasses.clear();
-			this.glasses.add(new GlassCircleTarget(0, this.resolution-this.tileres/2, this.resolution-this.tileres/2, 0));
-			this.glasses.add(new GlassCircleTarget(1, this.tileres/2, this.resolution-this.tileres/2, 0));
-			this.glasses.add(new GlassSquareEmitter(2, this.tileres/2, this.tileres/2, 180));
-			this.glasses.add(new GlassSquareSolid(3, this.resolution/2, this.resolution/2, 45));
-		}
-		
-		this.update();
-		this.render();
 	}
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
 		Log.i("surface", "destroying...");
-		MainActivity.instance.getFilesDir().mkdirs();
+		/*MainActivity.instance.getFilesDir().mkdirs();
 		try
 		{
 			PrintWriter pw = new PrintWriter(new File(MainActivity.instance.getFilesDir().getPath()+"/save.dat"));
-			
-			pw.println(this.glasses.size());
-			for(int i = 0; i < this.glasses.size(); i++)
-				pw.println(this.glasses.get(i).x+" "+this.glasses.get(i).y+" "+this.glasses.get(i).deg+" "+this.glasses.get(i).getClass().getName());
-			
+			pw.print(this.getSaveData());
 			pw.close();
 		}
 		catch(FileNotFoundException e)
 		{
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	public void resize(int width, int height)
@@ -166,6 +220,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			this.btnChange1 = new Rect(0, this.height-this.tilesize, this.tilesize, this.height);
 			this.btnChange2 = new Rect(this.tilesize, this.height-this.tilesize, 2*this.tilesize, this.height);
 			this.btnChange3 = new Rect(2*this.tilesize, this.height-this.tilesize, 3*this.tilesize, this.height);
+			this.btnNext = new Rect(this.width-3*this.tilesize, this.height-this.tilesize, this.width-2*this.tilesize, this.height);
 			this.btnInfo = new Rect(this.width-2*this.tilesize, this.height-this.tilesize, this.width-this.tilesize, this.height);
 			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
 			this.paletteRect = new Rect(2, this.size+2, this.width-2, this.size+this.tilesize*3/2+4);
@@ -175,6 +230,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			this.btnChange1 = new Rect(this.width-this.tilesize, 0, this.width, this.tilesize);
 			this.btnChange2 = new Rect(this.width-this.tilesize, this.tilesize, this.width, 2*this.tilesize);
 			this.btnChange3 = new Rect(this.width-this.tilesize, 2*this.tilesize, this.width, 3*this.tilesize);
+			this.btnNext = new Rect(this.width-this.tilesize, this.height-3*this.tilesize, this.width, this.height-2*this.tilesize);
 			this.btnInfo = new Rect(this.width-this.tilesize, this.height-2*this.tilesize, this.width, this.height-this.tilesize);
 			this.btnDelete = new Rect(this.width-this.tilesize, this.height-this.tilesize, this.width, this.height);
 			this.paletteRect = new Rect(this.size+2, 2, this.size+this.tilesize*3/2+4, this.height-2);
@@ -183,25 +239,28 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	
 	public void update()
 	{
-		this.laser.clear();
-		this.claser.clear();
+		this.laser1.clear();
+		this.laser2.clear();
+		this.claser1.clear();
+		this.claser2.clear();
 		
 		for(int i = 0; i < this.glasses.size(); i++)
 			this.glasses.get(i).onUpdate();
-		while(this.claser.size() > 0)
+		
+		while(this.claser1.size() > 0)
 		{
-			int n = this.claser.size();
+			int n = this.claser1.size();
 			for(int i = 0; i < n; i++)
 			{
 				int min = -1;
 				Vertex vmin = null;
 				for(int j = 0; j < this.glasses.size(); j++)
 				{
-					Vertex v = this.glasses.get(j).getLaserInterSectionPoint(this.claser.get(0));
+					Vertex v = this.glasses.get(j).getLaserInterSectionPoint(this.claser1.get(0));
 					if(v != null)
 					{
-						if(1F <= Math.abs(this.claser.get(0).x1-v.x) || 1F <= Math.abs(this.claser.get(0).y1-v.y))
-							if((vmin == null || (v.x-this.claser.get(0).x1)*(v.x-this.claser.get(0).x1) + (v.y-this.claser.get(0).y1)*(v.y-this.claser.get(0).y1) < (vmin.x-this.claser.get(0).x1)*(vmin.x-this.claser.get(0).x1) + (vmin.y-this.claser.get(0).y1)*(vmin.y-this.claser.get(0).y1)))
+						if(1F <= Math.abs(this.claser1.get(0).x1-v.x) || 1F <= Math.abs(this.claser1.get(0).y1-v.y))
+							if((vmin == null || (v.x-this.claser1.get(0).x1)*(v.x-this.claser1.get(0).x1) + (v.y-this.claser1.get(0).y1)*(v.y-this.claser1.get(0).y1) < (vmin.x-this.claser1.get(0).x1)*(vmin.x-this.claser1.get(0).x1) + (vmin.y-this.claser1.get(0).y1)*(vmin.y-this.claser1.get(0).y1)))
 							{
 								min = j;
 								vmin = v;
@@ -210,19 +269,94 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				}
 				if(min != -1)
 				{
-					Line nl = new Line(this.claser.get(0).x1, this.claser.get(0).y1, vmin.x, vmin.y);
-					if(!this.laser.contains(nl))
+					Line nl = new Line(this.claser1.get(0).x1, this.claser1.get(0).y1, vmin.x, vmin.y);
+					if(!this.laser1.contains(nl))
 					{
-						this.laser.add(nl);
-						this.glasses.get(min).handleLaserCollision(this.claser.get(0));
+						this.laser1.add(nl);
+						this.glasses.get(min).handleLaserCollision(this.claser1.get(0), true);
 					}
-					this.claser.remove(0);
+					this.claser1.remove(0);
 				}
 				else
 				{
-					this.laser.add(this.claser.get(0));
-					this.claser.remove(0);
+					this.laser1.add(this.claser1.get(0));
+					this.claser1.remove(0);
 				}
+			}
+		}
+		
+		while(this.claser2.size() > 0)
+		{
+			int n = this.claser2.size();
+			for(int i = 0; i < n; i++)
+			{
+				int min = -1;
+				Vertex vmin = null;
+				for(int j = 0; j < this.glasses.size(); j++)
+				{
+					Vertex v = this.glasses.get(j).getLaserInterSectionPoint(this.claser2.get(0));
+					if(v != null)
+					{
+						if(1F <= Math.abs(this.claser2.get(0).x1-v.x) || 1F <= Math.abs(this.claser2.get(0).y1-v.y))
+							if((vmin == null || (v.x-this.claser2.get(0).x1)*(v.x-this.claser2.get(0).x1) + (v.y-this.claser2.get(0).y1)*(v.y-this.claser2.get(0).y1) < (vmin.x-this.claser2.get(0).x1)*(vmin.x-this.claser2.get(0).x1) + (vmin.y-this.claser2.get(0).y1)*(vmin.y-this.claser2.get(0).y1)))
+							{
+								min = j;
+								vmin = v;
+							}
+					}
+				}
+				if(min != -1)
+				{
+					Line nl = new Line(this.claser2.get(0).x1, this.claser2.get(0).y1, vmin.x, vmin.y);
+					if(!this.laser2.contains(nl))
+					{
+						this.laser2.add(nl);
+						this.glasses.get(min).handleLaserCollision(this.claser2.get(0), false);
+					}
+					this.claser2.remove(0);
+				}
+				else
+				{
+					this.laser2.add(this.claser2.get(0));
+					this.claser2.remove(0);
+				}
+			}
+		}
+		
+		int state = 0;
+		for(int i = 0; i < this.glasses.size(); i++)
+		{
+			if(this.glasses.get(i) instanceof GlassBomb)
+				if(((GlassBomb)this.glasses.get(i)).hit1 || ((GlassBomb)this.glasses.get(i)).hit2)
+					state--;
+			if(this.glasses.get(i) instanceof GlassTarget)
+			{
+				if(((GlassTarget)this.glasses.get(i)).hit1)
+					if(NetworkHandler.instance.isClient)
+						state++;
+					else
+						state--;
+				if(((GlassTarget)this.glasses.get(i)).hit2)
+					if(NetworkHandler.instance.isClient)
+						state--;
+					else
+						state++;
+			}
+		}
+		
+		if(winString == null)
+		{
+			if(state > 0)
+			{
+				this.winString = "You won!";
+				NetworkHandler.instance.sendData();
+				this.selectedGlass = -1;
+			}
+			else if(state < 0)
+			{
+				this.winString = "You lost!";
+				NetworkHandler.instance.sendData();
+				this.selectedGlass = -1;
 			}
 		}
 	}
@@ -237,10 +371,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		Paint paint = new Paint();
 		paint.setTextSize(20);
 		paint.setAntiAlias(true);
+		paint.setFilterBitmap(true);
+		paint.setDither(true);
 		paint.setARGB(255, 255, 0, 0);
 		paint.setStrokeWidth(1F);
-		for(int i = 0; i < this.laser.size(); i++)
-			canvas.drawLine(this.laser.get(i).x1*this.size/this.resolution, this.laser.get(i).y1*this.size/this.resolution, this.laser.get(i).x2*this.size/this.resolution, this.laser.get(i).y2*this.size/this.resolution, paint);
+		for(int i = 0; i < this.laser1.size(); i++)
+			canvas.drawLine(this.laser1.get(i).x1*this.size/this.resolution, this.laser1.get(i).y1*this.size/this.resolution, this.laser1.get(i).x2*this.size/this.resolution, this.laser1.get(i).y2*this.size/this.resolution, paint);
+		paint.setARGB(255, 0, 0, 255);
+		// TODO color
+		for(int i = 0; i < this.laser2.size(); i++)
+			canvas.drawLine(this.laser2.get(i).x1*this.size/this.resolution, this.laser2.get(i).y1*this.size/this.resolution, this.laser2.get(i).x2*this.size/this.resolution, this.laser2.get(i).y2*this.size/this.resolution, paint);
 		paint.setARGB(255, 0, 255, 0);
 		for(int i = 0; i < this.glasses.size(); i++)
 			this.glasses.get(i).render(canvas);
@@ -303,27 +443,42 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		canvas.drawBitmap(bitmapIconRotate45, new Rect(0, 0, bitmapIconRotate45.getWidth(), bitmapIconRotate45.getHeight()), this.btnChange3, paint);
 		canvas.drawBitmap(bitmapIconDelete, new Rect(0, 0, bitmapIconDelete.getWidth(), bitmapIconDelete.getHeight()), this.btnDelete, paint);
 		canvas.drawBitmap(bitmapIconInfo, new Rect(0, 0, bitmapIconInfo.getWidth(), bitmapIconInfo.getHeight()), this.btnInfo, paint);
+		if(!NetworkHandler.instance.isWaiting)
+			canvas.drawBitmap(bitmapIconNext, new Rect(0, 0, bitmapIconNext.getWidth(), bitmapIconNext.getHeight()), this.btnNext, paint);
 		
-		//paint.setARGB(128, 255, 255, 255);
-		//paint.setTextSize(5);
-		//canvas.drawText("The icons license can be found at: http://creativecommons.org/licenses/by-nc/3.0/nl/deed.en_GB", 10, 10, paint);
 		
+		if(this.winString != null)
+		{
+			paint.setARGB(200, 64, 64, 64);
+			canvas.drawRect(0, 0, this.width, this.height, paint);
+			paint.setARGB(200, 255, 255, 255);
+			canvas.drawText(this.winString, width/2, height/2, paint);
+		}
+		/*
+		if(NetworkHandler.instance.partnerAddress == null)
+		{
+			paint.setARGB(200, 64, 64, 64);
+			canvas.drawRect(0, 0, this.width, this.height, paint);
+			paint.setARGB(200, 255, 255, 255);
+			canvas.drawText("Waiting for partner...", width/2, height/2, paint);
+			
+			try
+			{
+				canvas.drawText("Your IP: " + InetAddress.getLocalHost().getHostAddress(), width/2, height/2 + 20, paint);
+			}
+			catch(Exception e)
+			{
+				Log.e("asd", e.toString());
+			}
+		}*/
+		if(NetworkHandler.instance.isClient)
+			paint.setARGB(255, 255, 0, 0);
+		else
+			paint.setARGB(255, 0, 0, 255);
+		paint.setStrokeWidth(10F);
+		canvas.drawLine(0, width+(height-width)*2/3, width, width+(height-width)*2/3, paint);
+		// TODO
 		this.getHolder().unlockCanvasAndPost(canvas);
-	}
-	
-	/**
-	 * Function called by activity when the back button has been pressed.
-	 * @return True if the press is processed, false if it isn't.
-	 */
-	public boolean onBackPressed()
-	{
-		
-		return false;
-	}
-	
-	public void onMenuPressed()
-	{
-		
 	}
 	
 	@Override
@@ -337,66 +492,106 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 		
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{
-			if(this.paletteRect.contains((int)event.getX(), (int)event.getY())) // elem kiválasztása
+			if(this.winString != null)
 			{
-				this.selectedGlass = -1;
-				if(this.width < this.height)
-					this.paletteSelection = (int)event.getX()*4/this.width;
-				else
-					this.paletteSelection = (int)event.getY()*4/this.height;
+				this.winString = null;
+				this.generateMap();
+				this.update();
 				this.render();
 				return true;
 			}
-			else if((int)event.getX() < this.size && (int)event.getY() < size && this.paletteSelection != -1) // megpróbálja elhelyezni a kiválasztott elemet
+			
+			if(!NetworkHandler.instance.isWaiting)
 			{
-				Glass g = null;
-				int id = (this.glasses.size() == 0 ? 0 : this.glasses.get(this.glasses.size()-1).id+1);
-				switch(this.paletteSelection)
+				if(this.selectedGlass == -1 && this.paletteRect.contains((int)event.getX(), (int)event.getY())) // elem kiválasztása
 				{
-					case 0:
-						g = new GlassSquareMirror(id, (int)x, (int)y, 0);
-					break;
-					case 1:
-						g = new GlassSquareHalfMirror(id, (int)x, (int)y, 0);
-					break;
-					case 2:
-						g = new GlassSquarePrism(id, (int)x, (int)y, 0);
-					break;
-					case 3:
-						g = new GlassTrianglePrism(id, (int)x, (int)y, 0);
-					break;
+					if(this.width < this.height)
+						this.paletteSelection = (int)event.getX()*4/this.width;
+					else
+						this.paletteSelection = (int)event.getY()*4/this.height;
+					this.render();
+					return true;
 				}
-				if(g != null)
+				else if(this.selectedGlass == -1  && (int)event.getX() < this.size && (int)event.getY() < size && this.paletteSelection != -1) // megpróbálja elhelyezni a kiválasztott elemet
 				{
-					g.checkOutside();
-					if(g.getCollidingGlassIndex() == -1)
+					Glass g = null;
+					int id = (this.glasses.size() == 0 ? 0 : this.glasses.get(this.glasses.size()-1).id+1);
+					switch(this.paletteSelection)
 					{
-						this.paletteSelection = -1;
-						this.selectedGlass = this.glasses.size();
-						Game.instance.glasses.add(g);
+						case 0:
+							g = new GlassSquareMirror(id, (int)x, (int)y, 0);
+						break;
+						case 1:
+							g = new GlassSquareHalfMirror(id, (int)x, (int)y, 0);
+						break;
+						case 2:
+							g = new GlassSquarePrism(id, (int)x, (int)y, 0);
+						break;
+						case 3:
+							g = new GlassTrianglePrism(id, (int)x, (int)y, 0);
+						break;
+					}
+					if(g != null)
+					{
+						g.checkOutside();
+						if(g.getCollidingGlassIndex() == -1)
+						{
+							this.paletteSelection = -1;
+							this.selectedGlass = this.glasses.size();
+							Game.instance.glasses.add(g);
+							this.update();
+							this.render();
+							return true;
+						}
+					}
+				}
+				this.paletteSelection = -1;
+				
+				if(this.selectedGlass != -1)
+				{
+					if(this.btnDelete.contains((int)event.getX(), (int)event.getY())) // törlõ gomb megnyomva
+					{
+						this.glasses.remove(this.selectedGlass);
+						this.selectedGlass = -1;
+						NetworkHandler.instance.sendData();
 						this.update();
 						this.render();
 						return true;
 					}
 				}
-			}
-			this.paletteSelection = -1;
-			
-			if(this.selectedGlass != -1)
-			{
-				if(this.btnDelete.contains((int)event.getX(), (int)event.getY())) // törlõ gomb megnyomva
+				
+				if(this.btnNext.contains((int)event.getX(), (int)event.getY()))
 				{
-					this.glasses.remove(this.selectedGlass);
 					this.selectedGlass = -1;
-					this.update();
+					NetworkHandler.instance.sendData();
 					this.render();
 					return true;
+				}
+				
+				if(this.selectedGlass == -1 && this.preciseSelection)
+				{
+					for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
+						if(this.glasses.get(i).isMoveable() && this.glasses.get(i).isVertexInBounds(x, y))
+							this.selectedGlass = i;
+				}
+				else if(this.selectedGlass == -1)
+				{
+					for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
+						if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-x)*(this.glasses.get(i).x-x) + (this.glasses.get(i).y-y)*(this.glasses.get(i).y-y) <= this.selectionRange*this.selectionRange)
+							this.selectedGlass = i;
+				}
+				if(this.selectedGlass != -1)
+				{
+					this.grabX = (int)(x-this.glasses.get(this.selectedGlass).x);
+					this.grabY = (int)(y-this.glasses.get(this.selectedGlass).y);
+					this.grabDeg = -this.glasses.get(this.selectedGlass).deg-Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
 				}
 			}
 			
 			if(this.btnInfo.contains((int)event.getX(), (int)event.getY())) // infó gomb megnyomva
 			{
-				 // Linkify the message
+				this.selectedGlass = -1;
+				// Linkify the message
 			    final SpannableString s = new SpannableString(
 			    		"This app was made for the BeeSmarter2014 competition by the HunDevelopers team.\n"
 						+"\nThe icons are from https://www.iconfinder.com/search/?q=iconset:iconic-1 and are under the licence of http://creativecommons.org/licenses/by-nc/3.0/nl/deed.en_GB" +
@@ -406,13 +601,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
 				builder.setTitle("About the game");
 				builder.setMessage(s);
-				builder.setIcon(R.drawable.logo);
+				builder.setIcon(R.drawable.logo2);
 				builder.setNeutralButton("Return", null);
 				builder.create().show();
 				return true;
 			}
-			
-			this.selectedGlass = -1;
 			
 			if(this.btnChange1.contains((int)event.getX(), (int)event.getY()))
 			{
@@ -435,24 +628,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 				return true;
 			}
 			
-			if(this.preciseSelection)
-			{
-				for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
-					if(this.glasses.get(i).isMoveable() && this.glasses.get(i).isVertexInBounds(x, y))
-						this.selectedGlass = i;
-			}
-			else
-			{
-				for(int i = 0; i < this.glasses.size() && this.selectedGlass == -1; i++)
-					if(this.glasses.get(i).isMoveable() && (this.glasses.get(i).x-x)*(this.glasses.get(i).x-x) + (this.glasses.get(i).y-y)*(this.glasses.get(i).y-y) <= this.selectionRange*this.selectionRange)
-						this.selectedGlass = i;
-			}
-			if(this.selectedGlass != -1)
-			{
-				this.grabX = (int)(x-this.glasses.get(this.selectedGlass).x);
-				this.grabY = (int)(y-this.glasses.get(this.selectedGlass).y);
-				this.grabDeg = -this.glasses.get(this.selectedGlass).deg-Math.round((float)Math.toDegrees(Math.atan((y-this.glasses.get(this.selectedGlass).y)/(x-this.glasses.get(this.selectedGlass).x))))+(x-this.glasses.get(this.selectedGlass).x < 0 ? 180 : 0);
-			}
 			this.render();
 			return true;
 		}
@@ -502,7 +677,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 	@Override
 	public void onLongPress(MotionEvent event)
 	{
-		if(this.btnDelete.contains((int)event.getX(), (int)event.getY()))
+		/*if(this.btnDelete.contains((int)event.getX(), (int)event.getY()))
 		{
 			for(int i = 0; i < this.glasses.size(); i++)
 				if(this.glasses.get(i).isMoveable())
@@ -510,7 +685,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback, Gesture
 			this.selectedGlass = -1;
 			this.update();
 			this.render();
-		}
+		}*/
 	}
 
 	@Override

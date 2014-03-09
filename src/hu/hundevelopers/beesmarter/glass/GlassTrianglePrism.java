@@ -43,7 +43,7 @@ public class GlassTrianglePrism extends Glass
 	}
 	
 	@Override
-	public void handleLaserCollision(int side, Line laser, Vertex v)
+	public void handleLaserCollision(int side, Line laser, Vertex v, boolean color)
 	{
 		Vertex vm = new Vertex(this.vertices[(side+1)%this.vertices.length].y-this.vertices[side].y+v.x, this.vertices[side].x-this.vertices[(side+1)%this.vertices.length].x+v.y);
 		// tükör oldalának felezõmerõlegese
@@ -63,7 +63,10 @@ public class GlassTrianglePrism extends Glass
 		}
 		if(v2 == null)
 			return;
-		Game.instance.laser.add(new Line(v, v2));
+		if(color)
+			Game.instance.laser1.add(new Line(v, v2));
+		else
+			Game.instance.laser2.add(new Line(v, v2));
 		float dx = sl.y1-sl.y2;
 		float dy = sl.x2-sl.x1;
 		if(dx == 0)
@@ -76,6 +79,9 @@ public class GlassTrianglePrism extends Glass
 			dx *= s;
 			dy *= s;
 		}
-		Game.instance.claser.add(new Line(v2, new Vertex(v2.x+dx, v2.y+dy)));
+		if(color)
+			Game.instance.claser1.add(new Line(v2, new Vertex(v2.x+dx, v2.y+dy)));
+		else
+			Game.instance.claser2.add(new Line(v2, new Vertex(v2.x+dx, v2.y+dy)));
 	}
 }
